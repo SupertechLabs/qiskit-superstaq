@@ -89,6 +89,7 @@ class SuperstaQBackend(qiskit.providers.BackendV1):
                 self.qubits[arg_name] = cirq.LineQubit(idx)
             p[0] = [self.qubits[arg_name]]
 
+
         setattr(
             cirq.contrib.qasm_import._parser.QasmParser, "p_quantum_arg_bit", p_quantum_arg_bit_line
         )
@@ -130,12 +131,13 @@ class SuperstaQBackend(qiskit.providers.BackendV1):
 
         res.raise_for_status()
         response = res.json()
-        if "ids" not in response:
+        print(response)
+        if "job_ids" not in response:
             raise Exception
 
         #  we make a virtual job_id that aggregates all of the individual jobs
         # into a single one, that comma-separates the individual jobs:
-        job_id = ",".join(response["ids"])
+        job_id = ",".join(response["job_ids"])
         job = qss.superstaq_job.SuperstaQJob(self, job_id)
 
         return job
