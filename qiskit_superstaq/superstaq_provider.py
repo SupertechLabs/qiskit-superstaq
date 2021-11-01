@@ -66,16 +66,18 @@ class SuperstaQProvider(qiskit.providers.ProviderV1):
         return self.access_token
 
     def backends(self) -> List[qss.superstaq_backend.SuperstaQBackend]:
-        # needs to be fixed (#469)
-        backend_names = [
-            "aqt_device",
-            "ionq_device",
-            "rigetti_device",
-            "ibmq_botoga",
-            "ibmq_casablanca",
-            "ibmq_jakarta",
-            "ibmq_qasm_simulator",
-        ]
+        res = requests.get(
+            f"{self.url}/{qss.API_VERSION}/backends",
+            headers=self._http_headers(),
+            verify=(self.url == qss.API_URL),
+        )
+        json_dict = res.json()
+        print(json_dict)
+        backend_names = json_dict["superstaq_backends"]
+        backend_names = (
+            json_dict["superstaq_backends"]["compile-and-run"]
+            + json_dict["superstaq_backends"]["compile-only"]
+        )
 
         backends = []
 
