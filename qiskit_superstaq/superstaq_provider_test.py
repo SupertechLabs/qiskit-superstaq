@@ -72,3 +72,39 @@ def test_aqt_compile(mock_post: MagicMock) -> None:
     out = provider.aqt_compile([qc, qc])
     assert out.circuits == [qc, qc]
     assert not hasattr(out, "circuit") and not hasattr(out, "pulse_list")
+
+
+@patch("requests.get")
+def test_backends(mock_get: MagicMock) -> None:
+    provider = qss.superstaq_provider.SuperstaQProvider(access_token="MY_TOKEN")
+
+    expected_backends = {
+        "superstaq_backends": {
+            "compile-and-run": [
+                "ibmq_qasm_simulator",
+                "ibmq_armonk_qpu",
+                "ibmq_santiago_qpu",
+                "ibmq_bogota_qpu",
+                "ibmq_lima_qpu",
+                "ibmq_belem_qpu",
+                "ibmq_quito_qpu",
+                "ibmq_statevector_simulator",
+                "ibmq_mps_simulator",
+                "ibmq_extended-stabilizer_simulator",
+                "ibmq_stabilizer_simulator",
+                "ibmq_manila_qpu",
+                "d-wave_advantage-system1.1_qpu",
+                "aws_dm1_simulator",
+                "aws_tn1_simulator",
+                "ionq_ion_qpu",
+                "d-wave_dw-2000q-6_qpu",
+                "d-wave_advantage-system4.1_qpu",
+                "aws_sv1_simulator",
+                "rigetti_aspen-9_qpu",
+            ],
+            "compile-only": ["aqt_keysight_qpu", "sandia_qscout_qpu"],
+        }
+    }
+    mock_get.return_value.json = lambda: expected_backends
+    out = provider.backends()
+    assert out == expected_backends
