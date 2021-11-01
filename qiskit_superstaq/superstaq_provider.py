@@ -72,7 +72,6 @@ class SuperstaQProvider(qiskit.providers.ProviderV1):
             verify=(self.url == qss.API_URL),
         )
         json_dict = res.json()
-        print(json_dict)
         backend_names = json_dict["superstaq_backends"]
         backend_names = (
             json_dict["superstaq_backends"]["compile-and-run"]
