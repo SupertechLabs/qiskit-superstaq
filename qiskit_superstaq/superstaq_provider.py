@@ -71,6 +71,7 @@ class SuperstaQProvider(qiskit.providers.ProviderV1):
             )
 
         self._client = superstaq_client._SuperstaQClient(
+            client_name="qiskit-superstaq",
             remote_host=self.remote_host,
             api_key=self.api_key,
             default_target=default_target,
@@ -127,7 +128,9 @@ class SuperstaQProvider(qiskit.providers.ProviderV1):
         }
 
     def aqt_compile(
-        self, circuits: Union[qiskit.QuantumCircuit, List[qiskit.QuantumCircuit]], target: str = 'keysight'
+        self,
+        circuits: Union[qiskit.QuantumCircuit, List[qiskit.QuantumCircuit]],
+        target: str = "keysight",
     ) -> "qss.compiler_output.CompilerOutput":
         """Compiles the given circuit(s) to AQT device, optimized to its native gate set.
 
@@ -149,7 +152,9 @@ class SuperstaQProvider(qiskit.providers.ProviderV1):
         return compiler_output.read_json_aqt(json_dict, circuits_list)
 
     def qscout_compile(
-        self, circuits: Union[qiskit.QuantumCircuit, List[qiskit.QuantumCircuit]], target: str = "qscout"
+        self,
+        circuits: Union[qiskit.QuantumCircuit, List[qiskit.QuantumCircuit]],
+        target: str = "qscout",
     ) -> "qss.compiler_output.CompilerOutput":
         """Compiles the given circuit(s) to AQT device, optimized to its native gate set.
 
