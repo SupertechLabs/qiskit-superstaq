@@ -13,12 +13,14 @@
 # that they have been altered from the originals.
 
 import os
-from typing import List, Union
+from typing import List, Union, Optional
 
 import qiskit
 import requests
 
+import applications_superstaq
 import qiskit_superstaq as qss
+from applications_superstaq import superstaq_client
 
 
 class SuperstaQProvider(qiskit.providers.ProviderV1):
@@ -45,12 +47,42 @@ class SuperstaQProvider(qiskit.providers.ProviderV1):
 
     def __init__(
         self,
-        access_token: str,
-        url: str = os.getenv("SUPERSTAQ_REMOTE_HOST") or qss.API_URL,
+        remote_host: Optional[str] = None,
+        api_key: Optional[str] = None,
+        default_target: str = None,
+        api_version: str = applications_superstaq.API_VERSION,
+        max_retry_seconds: int = 3600,
+        verbose: bool = False,
+        ibmq_token: str = None,
+        ibmq_group: str = None,
+        ibmq_project: str = None,
+        ibmq_hub: str = None,
+        ibmq_pulse: bool = True,
     ) -> None:
-        self.access_token = access_token
         self._name = "superstaq_provider"
-        self.url = url
+        self.remote_host = (
+            remote_host or os.getenv("SUPERSTAQ_REMOTE_HOST") or applications_superstaq.API_URL
+        )
+        self.api_key = api_key or os.getenv("SUPERSTAQ_API_KEY")
+        if not self.api_key:
+            raise EnvironmentError(
+                "Parameter api_key was not specified and the environment variable "
+                "SUPERSTAQ_API_KEY was also not set."
+            )
+
+        self._client = superstaq_client._SuperstaQClient(
+            remote_host=self.remote_host,
+            api_key=self.api_key,
+            default_target=default_target,
+            api_version=api_version,
+            max_retry_seconds=max_retry_seconds,
+            verbose=verbose,
+            ibmq_token=ibmq_token,
+            ibmq_group=ibmq_group,
+            ibmq_project=ibmq_project,
+            ibmq_hub=ibmq_hub,
+            ibmq_pulse=ibmq_pulse,
+        )
 
     def __str__(self) -> str:
         return f"<SuperstaQProvider(name={self._name})>"
@@ -95,7 +127,7 @@ class SuperstaQProvider(qiskit.providers.ProviderV1):
         }
 
     def aqt_compile(
-        self, circuits: Union[qiskit.QuantumCircuit, List[qiskit.QuantumCircuit]]
+        self, circuits: Union[qiskit.QuantumCircuit, List[qiskit.QuantumCircuit]], target: str = 'keysight'
     ) -> "qss.compiler_output.CompilerOutput":
         """Compiles the given circuit(s) to AQT device, optimized to its native gate set.
 
@@ -107,24 +139,17 @@ class SuperstaQProvider(qiskit.providers.ProviderV1):
             pulse sequence corresponding to the optimized qiskit.QuantumCircuit(s) and the
             .pulse_list(s) attribute is the list(s) of cycles.
         """
-        json_dict = {"qiskit_circuits": qss.serialization.serialize_circuits(circuits)}
+        serialized_circuits = qss.serialization.serialize_circuits(circuits)
         circuits_list = not isinstance(circuits, qiskit.QuantumCircuit)
 
-        res = requests.post(
-            self.url + "/" + qss.API_VERSION + "/aqt_compile",
-            json=json_dict,
-            headers=self._http_headers(),
-            verify=(self.url == qss.API_URL),
-        )
-        res.raise_for_status()
-        json_dict = res.json()
+        json_dict = self._client.aqt_compile(serialized_circuits, target)
 
         from qiskit_superstaq import compiler_output
 
         return compiler_output.read_json_aqt(json_dict, circuits_list)
 
     def qscout_compile(
-        self, circuits: Union[qiskit.QuantumCircuit, List[qiskit.QuantumCircuit]]
+        self, circuits: Union[qiskit.QuantumCircuit, List[qiskit.QuantumCircuit]], target: str = "qscout"
     ) -> "qss.compiler_output.CompilerOutput":
         """Compiles the given circuit(s) to AQT device, optimized to its native gate set.
 
@@ -136,17 +161,10 @@ class SuperstaQProvider(qiskit.providers.ProviderV1):
             pulse sequence corresponding to the optimized qiskit.QuantumCircuit(s) and the
             .pulse_list(s) attribute is the list(s) of cycles.
         """
-        json_dict = {"qiskit_circuits": qss.serialization.serialize_circuits(circuits)}
+        serialized_circuits = qss.serialization.serialize_circuits(circuits)
         circuits_list = not isinstance(circuits, qiskit.QuantumCircuit)
-
-        res = requests.post(
-            self.url + "/" + qss.API_VERSION + "/qscout_compile",
-            json=json_dict,
-            headers=self._http_headers(),
-            verify=(self.url == qss.API_URL),
-        )
-        res.raise_for_status()
-        json_dict = res.json()
+        json_dict = {"qiskit_circuits": serialized_circuits, "backend": target}
+        json_dict = self._client.qscout_compile(json_dict, target)
 
         from qiskit_superstaq import compiler_output
 
