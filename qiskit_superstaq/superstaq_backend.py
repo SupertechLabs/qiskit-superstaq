@@ -21,9 +21,9 @@ import qiskit_superstaq as qss
 
 class SuperstaQBackend(qiskit.providers.BackendV1):
     def __init__(
-        self, provider: "qss.superstaq_provider.SuperstaQProvider", url: str, backend: str
+        self, provider: "qss.superstaq_provider.SuperstaQProvider", remote_host: str, backend: str
     ) -> None:
-        self.url = url
+        self.remote_host = remote_host
         self._provider = provider
         self.configuration_dict = {
             "backend_name": backend,
@@ -66,26 +66,11 @@ class SuperstaQBackend(qiskit.providers.BackendV1):
         if isinstance(circuits, qiskit.QuantumCircuit):
             circuits = [circuits]
 
-        superstaq_json = {
-            "qiskit_circuits": qss.serialization.serialize_circuits(circuits),
-            "backend": self.name(),
-            "shots": kwargs.get("shots"),
-            "ibmq_token": kwargs.get("ibmq_token"),
-            "ibmq_hub": kwargs.get("ibmq_hub"),
-            "ibmq_group": kwargs.get("ibmq_group"),
-            "ibmq_project": kwargs.get("ibmq_project"),
-            "ibmq_pulse": kwargs.get("ibmq_pulse"),
-        }
+        serialized_circuits = {"qiskit_circuits": qss.serialization.serialize_circuits(circuits)}
 
-        res = requests.post(
-            self.url + "/" + qss.API_VERSION + "/jobs",
-            json=superstaq_json,
-            headers=self._provider._http_headers(),
-            verify=(self.url == qss.API_URL),
+        response = self._provider.get_client().create_job(
+            serialized_circuits, repetitions=int(kwargs.get("shots"), target=self.name())
         )
-
-        res.raise_for_status()
-        response = res.json()
         if "job_ids" not in response:
             raise Exception
 

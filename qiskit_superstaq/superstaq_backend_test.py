@@ -6,13 +6,14 @@ import qiskit
 import requests
 
 import qiskit_superstaq as qss
+from applications_superstaq import superstaq_client
 
 
 def test_default_options() -> None:
     ss_provider = qss.superstaq_provider.SuperstaQProvider("MY_TOKEN")
     device = qss.superstaq_backend.SuperstaQBackend(
         provider=ss_provider,
-        url=qss.API_URL,
+        remote_host=qss.API_URL,
         backend="ibmq_qasm_simulator",
     )
 
@@ -43,7 +44,12 @@ class MockBadResponse:
 
 class MockProvider(qss.superstaq_provider.SuperstaQProvider):
     def __init__(self) -> None:
-        self.access_token = "super.tech"
+        self.api_key = "super.tech"
+        self._client = self._client = superstaq_client._SuperstaQClient(
+            client_name="qiskit-superstaq",
+            remote_host="https://127.0.0.1:5000",
+            api_key="Hello"
+        )
 
 
 class MockDevice(qss.superstaq_backend.SuperstaQBackend):
@@ -92,17 +98,17 @@ def test_eq() -> None:
 
     assert MockDevice() != 3
 
-    provider = qss.superstaq_provider.SuperstaQProvider(access_token="123")
+    provider = qss.superstaq_provider.SuperstaQProvider(api_key="123")
 
     backend1 = qss.superstaq_backend.SuperstaQBackend(
-        provider=provider, backend="ibmq_qasm_simulator", url=qss.API_URL
+        provider=provider, backend="ibmq_qasm_simulator", remote_host=qss.API_URL
     )
     backend2 = qss.superstaq_backend.SuperstaQBackend(
-        provider=provider, backend="ibmq_athens", url=qss.API_URL
+        provider=provider, backend="ibmq_athens", remote_host=qss.API_URL
     )
     assert backend1 != backend2
 
     backend3 = qss.superstaq_backend.SuperstaQBackend(
-        provider=provider, backend="ibmq_qasm_simulator", url=qss.API_URL
+        provider=provider, backend="ibmq_qasm_simulator", remote_host=qss.API_URL
     )
     assert backend1 == backend3
