@@ -78,7 +78,7 @@ class SuperstaQBackend(qiskit.providers.BackendV1):
         }
 
         res = requests.post(
-            self.remote_host + "/" + qss.API_VERSION + "/jobs",
+            f"{self.remote_host}/{qss.API_VERSION}/jobs",
             json=superstaq_json,
             headers=self._provider._http_headers(),
             verify=(self.remote_host == qss.API_URL),
