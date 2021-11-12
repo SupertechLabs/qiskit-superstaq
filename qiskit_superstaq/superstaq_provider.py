@@ -45,7 +45,7 @@ class SuperstaQProvider(qiskit.providers.ProviderV1):
                 If that variable is not set, then this uses
                 `https://superstaq.super.tech/{api_version}`,
                 where `{api_version}` is the `api_version` specified below.
-            api_key: A string key which allows access to the api. If this is None,
+            api_key: A string key which allows access to the API. If this is None,
                 then this instance will use the environment variable  `SUPERSTAQ_API_KEY`. If that
                 variable is not set, then this will raise an `EnvironmentError`.
             default_target: Which target to default to using. If set to None, no default is set
