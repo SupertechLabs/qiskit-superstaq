@@ -38,10 +38,26 @@ class SuperstaQProvider(qiskit.providers.ProviderV1):
     where `'MY_TOKEN'` is the access token provided by SuperstaQ,
     and 'my_backend' is the name of the desired backend.
 
-    Attributes:
-        access_token (str): The access token.
-        name (str): Name of the provider instance.
-        url (str): The url that the API is hosted on.
+    Args:
+         Args:
+            remote_host: The location of the api in the form of an url. If this is None,
+                then this instance will use the environment variable `SUPERSTAQ_REMOTE_HOST`.
+                If that variable is not set, then this uses
+                `https://superstaq.super.tech/{api_version}`,
+                where `{api_version}` is the `api_version` specified below.
+            api_key: A string key which allows access to the api. If this is None,
+                then this instance will use the environment variable  `SUPERSTAQ_API_KEY`. If that
+                variable is not set, then this will raise an `EnvironmentError`.
+            default_target: Which target to default to using. If set to None, no default is set
+                and target must always be specified in calls. If set, then this default is used,
+                unless a target is specified for a given call. Supports either 'qpu' or
+                'simulator'.
+            api_version: Version of the api.
+            max_retry_seconds: The number of seconds to retry calls for. Defaults to one hour.
+            verbose: Whether to print to stdio and stderr on retriable errors.
+        Raises:
+            EnvironmentError: if the `api_key` is None and has no corresponding environment
+                variable set.
     """
 
     def __init__(

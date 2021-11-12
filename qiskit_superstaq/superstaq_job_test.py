@@ -25,7 +25,7 @@ class MockDevice(qss.superstaq_backend.SuperstaQBackend):
 
     _configuration = MockConfiguration()
 
-    url = "super.tech"
+    remote_host = "super.tech"
 
 
 class MockJob(qss.superstaq_job.SuperstaQJob):
