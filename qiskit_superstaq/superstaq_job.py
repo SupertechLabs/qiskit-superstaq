@@ -62,7 +62,7 @@ class SuperstaQJob(qiskit.providers.JobV1):
                         "Timed out waiting for result"
                     )  # pragma: no cover b/c don't want slow test or mocking time
 
-                getstr = f"{self._backend.remote_host}/" + qss.API_VERSION + f"/job/{jid}"
+                getstr = f"{self._backend.remote_host}/{qss.API_VERSION}/job/{jid}"
                 result = requests.get(
                     getstr,
                     headers=self._backend._provider._http_headers(),
