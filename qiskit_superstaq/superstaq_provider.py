@@ -13,14 +13,13 @@
 # that they have been altered from the originals.
 
 import os
-from typing import List, Union, Optional
-
-import qiskit
-import requests
+from typing import List, Optional, Union
 
 import applications_superstaq
-import qiskit_superstaq as qss
+import qiskit
 from applications_superstaq import superstaq_client
+
+import qiskit_superstaq as qss
 
 
 class SuperstaQProvider(qiskit.providers.ProviderV1):
@@ -80,13 +79,15 @@ class SuperstaQProvider(qiskit.providers.ProviderV1):
 
     def __repr__(self) -> str:
         repr1 = f"<SuperstaQProvider(name={self._name}, "
-        return repr1 + f"access_token={self.access_token})>"
+        return repr1 + f"api_key={self.api_key})>"
 
     def get_backend(self, backend: str) -> "qss.superstaq_backend.SuperstaQBackend":
-        return qss.superstaq_backend.SuperstaQBackend(provider=self, url=self.url, backend=backend)
+        return qss.superstaq_backend.SuperstaQBackend(
+            provider=self, remote_host=self.remote_host, backend=backend
+        )
 
-    def get_access_token(self) -> str:
-        return self.access_token
+    def get_access_token(self) -> Optional[str]:
+        return self.api_key
 
     def backends(self) -> List[qss.superstaq_backend.SuperstaQBackend]:
         # needs to be fixed (#469)
@@ -104,7 +105,9 @@ class SuperstaQProvider(qiskit.providers.ProviderV1):
 
         for name in backend_names:
             backends.append(
-                qss.superstaq_backend.SuperstaQBackend(provider=self, url=self.url, backend=name)
+                qss.superstaq_backend.SuperstaQBackend(
+                    provider=self, remote_host=self.remote_host, backend=name
+                )
             )
 
         return backends
