@@ -53,11 +53,6 @@ class SuperstaQProvider(qiskit.providers.ProviderV1):
         api_version: str = applications_superstaq.API_VERSION,
         max_retry_seconds: int = 3600,
         verbose: bool = False,
-        ibmq_token: str = None,
-        ibmq_group: str = None,
-        ibmq_project: str = None,
-        ibmq_hub: str = None,
-        ibmq_pulse: bool = True,
     ) -> None:
         self._name = "superstaq_provider"
         self.remote_host = (
@@ -78,11 +73,6 @@ class SuperstaQProvider(qiskit.providers.ProviderV1):
             api_version=api_version,
             max_retry_seconds=max_retry_seconds,
             verbose=verbose,
-            ibmq_token=ibmq_token,
-            ibmq_group=ibmq_group,
-            ibmq_project=ibmq_project,
-            ibmq_hub=ibmq_hub,
-            ibmq_pulse=ibmq_pulse,
         )
 
     def __str__(self) -> str:
@@ -145,7 +135,7 @@ class SuperstaQProvider(qiskit.providers.ProviderV1):
         serialized_circuits = qss.serialization.serialize_circuits(circuits)
         circuits_list = not isinstance(circuits, qiskit.QuantumCircuit)
 
-        json_dict = self._client.aqt_compile(serialized_circuits, target)
+        json_dict = self._client.aqt_compile({"qiskit_circuits": serialized_circuits}, target)
 
         from qiskit_superstaq import compiler_output
 
@@ -168,8 +158,7 @@ class SuperstaQProvider(qiskit.providers.ProviderV1):
         """
         serialized_circuits = qss.serialization.serialize_circuits(circuits)
         circuits_list = not isinstance(circuits, qiskit.QuantumCircuit)
-        json_dict = {"qiskit_circuits": serialized_circuits, "backend": target}
-        json_dict = self._client.qscout_compile(json_dict, target)
+        json_dict = self._client.qscout_compile({"qiskit_circuits": serialized_circuits}, target)
 
         from qiskit_superstaq import compiler_output
 
