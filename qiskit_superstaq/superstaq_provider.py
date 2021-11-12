@@ -40,7 +40,7 @@ class SuperstaQProvider(qiskit.providers.ProviderV1):
 
     Args:
          Args:
-            remote_host: The location of the api in the form of an url. If this is None,
+            remote_host: The location of the API in the form of a URL. If this is None,
                 then this instance will use the environment variable `SUPERSTAQ_REMOTE_HOST`.
                 If that variable is not set, then this uses
                 `https://superstaq.super.tech/{api_version}`,
