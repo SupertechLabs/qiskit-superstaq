@@ -112,7 +112,7 @@ class SuperstaQJob(qiskit.providers.JobV1):
         # For example, if any of the jobs are still queued, we report Queued as the status
         # for the entire batch.
         for job_id in job_id_list:
-            get_url = self._backend.remote_host + "/" + qss.API_VERSION + f"/job/{job_id}"
+            get_url = f"{self._backend.remote_host}/{qss.API_VERSION}/job/{job_id}"
             result = requests.get(
                 get_url,
                 headers=self._backend._provider._http_headers(),
