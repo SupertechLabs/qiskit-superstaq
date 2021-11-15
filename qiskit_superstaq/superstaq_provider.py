@@ -13,23 +13,21 @@
 # that they have been altered from the originals.
 
 import os
-from typing import Dict, List, Optional, Union
+from typing import List, Optional, Union
 
 import applications_superstaq
-import numpy as np
 import qiskit
-import qubovert as qv
 from applications_superstaq import finance
 from applications_superstaq import logistics
 from applications_superstaq import superstaq_client
 from applications_superstaq import user_config
-from applications_superstaq.finance import MaxSharpeOutput, MinVolOutput
-from applications_superstaq.logistics import TSPOutput, WarehouseOutput
 
 import qiskit_superstaq as qss
 
 
-class SuperstaQProvider(qiskit.providers.ProviderV1):
+class SuperstaQProvider(
+    qiskit.providers.ProviderV1, finance.Finance, logistics.Logistics, user_config.UserConfig
+):
     """Provider for SuperstaQ backend.
 
     Typical usage is:
@@ -189,45 +187,3 @@ class SuperstaQProvider(qiskit.providers.ProviderV1):
         from qiskit_superstaq import compiler_output
 
         return compiler_output.read_json_qscout(json_dict, circuits_list)
-
-    def submit_qubo(self, qubo: qv.QUBO, target: str, repetitions: int = 1000) -> np.recarray:
-        client = finance.Finance(self._client)
-        return client.submit_qubo(qubo, target, repetitions)
-
-    def find_min_vol_portfolio(
-        self,
-        stock_symbols: List[str],
-        desired_return: float,
-        years_window: float = 5.0,
-        solver: str = "anneal",
-    ) -> MinVolOutput:
-        client = finance.Finance(self._client)
-        return client.find_min_vol_portfolio(stock_symbols, desired_return, years_window, solver)
-
-    def find_max_pseudo_sharpe_ratio(
-        self,
-        stock_symbols: List[str],
-        k: float,
-        num_assets_in_portfolio: int = None,
-        years_window: float = 5.0,
-        solver: str = "anneal",
-    ) -> MaxSharpeOutput:
-        client = finance.Finance(self._client)
-
-        return client.find_max_pseudo_sharpe_ratio(
-            stock_symbols, k, num_assets_in_portfolio, years_window, solver
-        )
-
-    def tsp(self, locs: List[str], solver: str = "anneal") -> TSPOutput:
-        client = logistics.Logistics(self._client)
-        return client.tsp(locs, solver)
-
-    def warehouse(
-        self, k: int, possible_warehouses: List[str], customers: List[str], solver: str = "anneal"
-    ) -> WarehouseOutput:
-        client = logistics.Logistics(self._client)
-        return client.warehouse(k, possible_warehouses, customers, solver)
-
-    def aqt_upload_configs(self, pulses_file_path: str, variables_file_path: str) -> Dict[str, str]:
-        client = user_config.UserConfig(self._client)
-        return client.aqt_upload_configs(pulses_file_path, variables_file_path)
