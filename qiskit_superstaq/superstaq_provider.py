@@ -18,14 +18,13 @@ from typing import Dict, List, Optional, Union
 import applications_superstaq
 import numpy as np
 import qiskit
+import qubovert as qv
+from applications_superstaq import finance
+from applications_superstaq import logistics
 from applications_superstaq import superstaq_client
+from applications_superstaq import user_config
 from applications_superstaq.finance import MaxSharpeOutput, MinVolOutput
 from applications_superstaq.logistics import TSPOutput, WarehouseOutput
-from applications_superstaq.qubo import read_json_qubo_result
-from applications_superstaq import logistics
-from applications_superstaq import finance
-from applications_superstaq import user_config
-import qubovert as qv
 
 import qiskit_superstaq as qss
 
@@ -227,7 +226,7 @@ class SuperstaQProvider(qiskit.providers.ProviderV1):
         self, k: int, possible_warehouses: List[str], customers: List[str], solver: str = "anneal"
     ) -> WarehouseOutput:
         client = logistics.Logistics(self._client)
-        return client.read_json_warehouse(json_dict)
+        return client.warehouse(k, possible_warehouses, customers, solver)
 
     def aqt_upload_configs(self, pulses_file_path: str, variables_file_path: str) -> Dict[str, str]:
         client = user_config.UserConfig(self._client)

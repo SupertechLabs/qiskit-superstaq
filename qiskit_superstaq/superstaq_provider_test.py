@@ -6,8 +6,8 @@ import applications_superstaq
 import numpy as np
 import pytest
 import qiskit
-
 import qubovert as qv
+
 import qiskit_superstaq as qss
 
 
@@ -171,3 +171,63 @@ def test_service_find_max_pseudo_sharpe_ratio(
         ["AAPL", "GOOG"], 8.1, 10.5, 0.771, qubo
     )
     assert service.find_max_pseudo_sharpe_ratio(["AAPL", "GOOG", "IEF", "MMM"], k=0.5) == expected
+
+
+@mock.patch(
+    "applications_superstaq.superstaq_client._SuperstaQClient.tsp",
+    return_value={
+        "route": ["Chicago", "St Louis", "St Paul", "Chicago"],
+        "route_list_numbers": [0, 1, 2, 0],
+        "total_distance": 100.0,
+        "map_link": ["maps.google.com"],
+        "qubo": [{"keys": ["0"], "value": 123}],
+    },
+)
+def test_service_tsp(mock_tsp: mock.MagicMock) -> None:
+    service = qss.superstaq_provider.SuperstaQProvider(api_key="MY_TOKEN")
+    qubo = {("0",): 123}
+    expected = applications_superstaq.logistics.TSPOutput(
+        ["Chicago", "St Louis", "St Paul", "Chicago"],
+        [0, 1, 2, 0],
+        100.0,
+        ["maps.google.com"],
+        qubo,
+    )
+    assert service.tsp(["Chicago", "St Louis", "St Paul"]) == expected
+
+
+@mock.patch(
+    "applications_superstaq.superstaq_client._SuperstaQClient.warehouse",
+    return_value={
+        "warehouse_to_destination": [("Chicago", "Rockford"), ("Chicago", "Aurora")],
+        "total_distance": 100.0,
+        "map_link": "map.html",
+        "open_warehouses": ["Chicago"],
+        "qubo": [{"keys": ["0"], "value": 123}],
+    },
+)
+def test_service_warehouse(mock_warehouse: mock.MagicMock) -> None:
+    service = qss.superstaq_provider.SuperstaQProvider(api_key="MY_TOKEN")
+    qubo = {("0",): 123}
+    expected = applications_superstaq.logistics.WarehouseOutput(
+        [("Chicago", "Rockford"), ("Chicago", "Aurora")], 100.0, "map.html", ["Chicago"], qubo
+    )
+    assert service.warehouse(1, ["Chicago", "San Francisco"], ["Rockford", "Aurora"]) == expected
+
+
+@mock.patch(
+    "applications_superstaq.superstaq_client._SuperstaQClient.aqt_upload_configs",
+    return_value={"status": "Your AQT configuration has been updated"},
+)
+def test_service_aqt_upload_configs(mock_aqt_compile: mock.MagicMock) -> None:
+    service = qss.superstaq_provider.SuperstaQProvider(api_key="MY_TOKEN")
+
+    with open("/tmp/Pulses.yaml", "w") as pulses_file:
+        pulses_file.write("Hello")
+
+    with open("/tmp/Variables.yaml", "w") as variables_file:
+        variables_file.write("World")
+
+    assert service.aqt_upload_configs("/tmp/Pulses.yaml", "/tmp/Variables.yaml") == {
+        "status": "Your AQT configuration has been updated"
+    }
