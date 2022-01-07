@@ -110,16 +110,6 @@ class SuperstaQProvider(
     def get_access_token(self) -> Optional[str]:
         return self.api_key
 
-    def set_ibm_token(self, token: str) -> None:
-        """Sets IBMQ token field for user in database.
-
-        Args:
-            token: IBMQ token string.
-
-        Returns: no returns.
-        """
-        return self._client.set_ibm_token({"ibmq_token": token})
-
     def backends(self) -> List[qss.superstaq_backend.SuperstaQBackend]:
         # needs to be fixed (#469)
         backend_names = [
