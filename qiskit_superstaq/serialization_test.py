@@ -92,9 +92,9 @@ def test_warning_suppression() -> None:
     # Check that a warning would normally be thrown
     with pytest.warns(UserWarning):
         buf = io.BytesIO(applications_superstaq.converters._str_to_bytes(serialized_circuit))
-        assert qiskit.circuit.qpy_serialization.load(buf) == [circuit]
+        _ = qiskit.circuit.qpy_serialization.load(buf)
 
     # Check that it is suppressed by deserialize_circuits
     with warnings.catch_warnings():
         warnings.filterwarnings("error")
-        assert qiskit_superstaq.serialization.deserialize_circuits(serialized_circuit) == [circuit]
+        _ = qiskit_superstaq.serialization.deserialize_circuits(serialized_circuit)
