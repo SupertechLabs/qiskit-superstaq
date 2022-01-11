@@ -71,6 +71,17 @@ def test_provider() -> None:
     assert ss_provider.backends() == expected_backends
 
 
+@patch.dict(os.environ, {"SUPERSTAQ_API_KEY": ""})
+def test_get_balance() -> None:
+    ss_provider = qss.superstaq_provider.SuperstaQProvider(api_key="MY_TOKEN")
+    mock_client = MagicMock()
+    mock_client.get_balance.return_value = {"balance": 12345.6789}
+    ss_provider._client = mock_client
+
+    assert ss_provider.get_balance() == "$12,345.68"
+    assert ss_provider.get_balance(pretty_output=False) == 12345.6789
+
+
 @patch("requests.post")
 def test_aqt_compile(mock_post: MagicMock) -> None:
     provider = qss.superstaq_provider.SuperstaQProvider(api_key="MY_TOKEN")
