@@ -28,7 +28,7 @@ def test_provider() -> None:
 
     assert repr(ss_provider) == "<SuperstaQProvider(name=superstaq_provider, api_key=MY_TOKEN)>"
 
-    expected_backends = {
+    backends = {
         "superstaq_backends": {
             "compile-and-run": [
                 "ibmq_qasm_simulator",
@@ -55,21 +55,20 @@ def test_provider() -> None:
             "compile-only": ["aqt_keysight_qpu", "sandia_qscout_qpu"],
         }
     }
-    mock_get.return_value.json = lambda: expected_backends
-    backend_names = (
-        expected_backends["superstaq_backends"]["compile-and-run"]
-        + expected_backends["superstaq_backends"]["compile-only"]
-    )
+    backend_names = backends["superstaq_backends"]["compile-and-run"]
 
-    backends = []
+    expected_backends = []
     for name in backend_names:
-        backends.append(
+        expected_backends.append(
             qss.superstaq_backend.SuperstaQBackend(
                 provider=ss_provider, remote_host=qss.API_URL, backend=name
             )
         )
 
-    assert ss_provider.backends() == backends
+    mock_client = MagicMock()
+    mock_client.get_backends.return_value = backends
+    ss_provider._client = mock_client
+    assert ss_provider.backends() == expected_backends
 
 
 @patch("requests.post")
