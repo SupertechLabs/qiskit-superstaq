@@ -114,7 +114,7 @@ class SuperstaQProvider(
         """
         balance = self._client.get_balance()["balance"]
         if pretty_output:
-            return f"S{balance:,.2f}"
+            return f"${balance:,.2f}"
         return balance
 
     def get_backend(self, backend: str) -> "qss.superstaq_backend.SuperstaQBackend":
