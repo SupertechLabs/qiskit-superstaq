@@ -102,6 +102,21 @@ class SuperstaQProvider(
         repr1 = f"<SuperstaQProvider(name={self._name}, "
         return repr1 + f"api_key={self.api_key})>"
 
+    def get_balance(self, pretty_output: bool = True) -> Union[str, float]:
+        """Get's querying user's account balance in USD.
+
+        Args:
+            pretty_output: whether to return a pretty string or a float of balance.
+
+        Returns:
+            Returns balance float, or for pretty output formats balance as a string ($-prefix,
+            commas on LHS every three digits, two digits after period).
+        """
+        balance = self._client.get_balance()["balance"]
+        if pretty_output:
+            return f"S{balance:,.2f}"
+        return balance
+
     def get_backend(self, backend: str) -> "qss.superstaq_backend.SuperstaQBackend":
         return qss.superstaq_backend.SuperstaQBackend(
             provider=self, remote_host=self.remote_host, backend=backend
