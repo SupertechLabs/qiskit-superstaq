@@ -38,6 +38,10 @@ def test_aqt_compile(provider: qiskit_superstaq.superstaq_provider.SuperstaQProv
     assert provider.aqt_compile([circuit, circuit]).circuits == [expected, expected]
 
 
+def test_get_balance(provider: qiskit_superstaq.superstaq_provider.SuperstaQProvider) -> None:
+        assert isinstance(provider.get_balance(pretty_output=False), float)
+
+
 def test_qscout_compile(provider: qiskit_superstaq.superstaq_provider.SuperstaQProvider) -> None:
     circuit = qiskit.QuantumCircuit(1)
     circuit.h(0)
