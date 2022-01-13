@@ -171,7 +171,7 @@ class SuperstaQProvider(
         self,
         circuits: Union[qiskit.QuantumCircuit, List[qiskit.QuantumCircuit]],
         target: str = "ibmq_qasm_simulator",
-    ) -> qiskit.pulse.Schedule:
+    ) -> Union[qiskit.pulse.Schedule, List[qiskit.pulse.Schedule]]:
         """Returns pulse schedule(s) for the given circuit(s) and target."""
         serialized_circuits = qss.serialization.serialize_circuits(circuits)
 
