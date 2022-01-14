@@ -197,7 +197,7 @@ class SuperstaQProvider(
         self,
         circuits: Union[qiskit.QuantumCircuit, List[qiskit.QuantumCircuit]],
         target: str = "neutral_atom_qpu",
-    ) -> Any:
+    ) -> Union[qiskit.QuantumCircuit, List[qiskit.QuantumCircuit]]:
         """Returns pulse schedule for the given circuit and target.
 
         Pulse must be installed for returned object to correctly deserialize to a pulse schedule.
