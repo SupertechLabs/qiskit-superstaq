@@ -80,7 +80,7 @@ def test_aqt_compile(mock_post: MagicMock) -> None:
     assert not hasattr(out, "circuit") and not hasattr(out, "pulse_list")
 
 
-@mock.patch(
+@patch(
     "applications_superstaq.superstaq_client._SuperstaQClient.ibmq_compile",
     return_value={"pulses": applications_superstaq.converters.serialize([mock.DEFAULT])},
 )
