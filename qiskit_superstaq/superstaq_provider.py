@@ -13,7 +13,7 @@
 # that they have been altered from the originals.
 
 import os
-from typing import List, Optional, Union
+from typing import Any, List, Optional, Union
 
 import applications_superstaq
 import qiskit
@@ -192,3 +192,28 @@ class SuperstaQProvider(
         from qiskit_superstaq import compiler_output
 
         return compiler_output.read_json_qscout(json_dict, circuits_list)
+
+    def neutral_atom_compile(
+        self,
+        circuits: Union[qiskit.QuantumCircuit, List[qiskit.QuantumCircuit]],
+        target: str = "neutral_atom_qpu",
+    ) -> Any:
+        """Returns pulse schedule for the given circuit and target.
+
+        Pulse must be installed for returned object to correctly deserialize to a pulse schedule.
+        """
+        serialized_circuits = qss.serialization.serialize_circuits(circuits)
+
+        json_dict = self._client.neutral_atom_compile(
+            {"qiskit_circuits": serialized_circuits, "backend": target}
+        )
+        try:
+            pulses = applications_superstaq.converters.deserialize(json_dict["pulses"])
+        except ModuleNotFoundError as e:
+            raise applications_superstaq.SuperstaQModuleNotFoundException(
+                name=str(e.name), context="neutral_atom_compile"
+            )
+
+        if isinstance(circuits, qiskit.QuantumCircuit):
+            return pulses[0]
+        return pulses
