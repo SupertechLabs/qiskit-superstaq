@@ -39,6 +39,10 @@ def test_aqt_compile(provider: qiskit_superstaq.superstaq_provider.SuperstaQProv
 
 
 def test_get_balance(provider: qiskit_superstaq.superstaq_provider.SuperstaQProvider) -> None:
+    balance_str = provider.get_balance()
+    assert isinstance(balance_str, str)
+    assert balance_str.startswith("$")
+
     assert isinstance(provider.get_balance(pretty_output=False), float)
 
 
