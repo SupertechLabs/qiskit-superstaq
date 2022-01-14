@@ -60,6 +60,17 @@ def test_read_json() -> None:
     assert out.circuits == [circuit, circuit]
     assert not hasattr(out, "circuit")
 
+    json_dict = {"qiskit_circuits": qiskit_superstaq.serialization.serialize_circuits(circuit)}
+
+    out = compiler_output.read_json_only_circuits(json_dict, circuits_list=False)
+    assert out.circuit == circuit
+
+    json_dict = {
+        "qiskit_circuits": qiskit_superstaq.serialization.serialize_circuits([circuit, circuit])
+    }
+    out = compiler_output.read_json_only_circuits(json_dict, circuits_list=True)
+    assert out.circuits == [circuit, circuit]
+
 
 def test_read_json_with_qtrl() -> None:  # pragma: no cover, b/c test requires qtrl installation
     qtrl = pytest.importorskip("qtrl", reason="qtrl not installed")
