@@ -13,7 +13,7 @@
 # that they have been altered from the originals.
 
 import os
-from typing import Any, List, Optional, Union
+from typing import List, Optional, Union
 
 import applications_superstaq
 import qiskit
