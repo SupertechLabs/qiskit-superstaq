@@ -200,7 +200,7 @@ class SuperstaQProvider(
     ) -> Union[qiskit.QuantumCircuit, List[qiskit.QuantumCircuit]]:
         """Returns pulse schedule for the given circuit and target.
 
-        Pulse must be installed for returned object to correctly deserialize to a pulse schedule.
+        Pulser must be installed for returned object to correctly deserialize to a pulse schedule.
         """
         serialized_circuits = qss.serialization.serialize_circuits(circuits)
 
