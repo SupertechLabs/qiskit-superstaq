@@ -192,7 +192,7 @@ class SuperstaQProvider(
         from qiskit_superstaq import compiler_output
 
         return compiler_output.read_json_qscout(json_dict, circuits_list)
-      
+
     def cq_compile(
         self,
         circuits: Union[qiskit.QuantumCircuit, List[qiskit.QuantumCircuit]],
@@ -214,7 +214,7 @@ class SuperstaQProvider(
         from qiskit_superstaq import compiler_output
 
         return compiler_output.read_json_only_circuits(json_dict, circuits_list)
-      
+
     def neutral_atom_compile(
         self,
         circuits: Union[qiskit.QuantumCircuit, List[qiskit.QuantumCircuit]],

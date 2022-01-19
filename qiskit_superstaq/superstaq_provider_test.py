@@ -158,6 +158,7 @@ def test_qscout_compile(mock_post: MagicMock) -> None:
     out = provider.qscout_compile([qc, qc])
     assert out.circuits == [qc, qc]
 
+
 @patch("requests.post")
 def test_cq_compile(mock_post: MagicMock) -> None:
     provider = qss.superstaq_provider.SuperstaQProvider(api_key="MY_TOKEN")
@@ -179,7 +180,8 @@ def test_cq_compile(mock_post: MagicMock) -> None:
     }
     out = provider.cq_compile([qc, qc])
     assert out.circuits == [qc, qc]
-    
+
+
 @patch(
     "applications_superstaq.superstaq_client._SuperstaQClient.neutral_atom_compile",
     return_value={"pulses": applications_superstaq.converters.serialize([mock.DEFAULT])},
