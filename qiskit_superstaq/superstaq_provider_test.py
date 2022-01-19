@@ -1,5 +1,6 @@
 import os
 import textwrap
+from unittest import mock
 from unittest.mock import MagicMock, patch
 
 import applications_superstaq
@@ -28,25 +29,58 @@ def test_provider() -> None:
 
     assert repr(ss_provider) == "<SuperstaQProvider(name=superstaq_provider, api_key=MY_TOKEN)>"
 
-    backend_names = [
-        "aqt_device",
-        "ionq_device",
-        "rigetti_device",
-        "ibmq_botoga",
-        "ibmq_casablanca",
-        "ibmq_jakarta",
-        "ibmq_qasm_simulator",
-    ]
+    backends = {
+        "superstaq_backends": {
+            "compile-and-run": [
+                "ibmq_qasm_simulator",
+                "ibmq_armonk_qpu",
+                "ibmq_santiago_qpu",
+                "ibmq_bogota_qpu",
+                "ibmq_lima_qpu",
+                "ibmq_belem_qpu",
+                "ibmq_quito_qpu",
+                "ibmq_statevector_simulator",
+                "ibmq_mps_simulator",
+                "ibmq_extended-stabilizer_simulator",
+                "ibmq_stabilizer_simulator",
+                "ibmq_manila_qpu",
+                "d-wave_advantage-system1.1_qpu",
+                "aws_dm1_simulator",
+                "aws_tn1_simulator",
+                "ionq_ion_qpu",
+                "d-wave_dw-2000q-6_qpu",
+                "d-wave_advantage-system4.1_qpu",
+                "aws_sv1_simulator",
+                "rigetti_aspen-9_qpu",
+            ],
+            "compile-only": ["aqt_keysight_qpu", "sandia_qscout_qpu"],
+        }
+    }
+    backend_names = backends["superstaq_backends"]["compile-and-run"]
 
-    backends = []
+    expected_backends = []
     for name in backend_names:
-        backends.append(
+        expected_backends.append(
             qss.superstaq_backend.SuperstaQBackend(
                 provider=ss_provider, remote_host=qss.API_URL, backend=name
             )
         )
 
-    assert ss_provider.backends() == backends
+    mock_client = MagicMock()
+    mock_client.get_backends.return_value = backends
+    ss_provider._client = mock_client
+    assert ss_provider.backends() == expected_backends
+
+
+@patch.dict(os.environ, {"SUPERSTAQ_API_KEY": ""})
+def test_get_balance() -> None:
+    ss_provider = qss.superstaq_provider.SuperstaQProvider(api_key="MY_TOKEN")
+    mock_client = MagicMock()
+    mock_client.get_balance.return_value = {"balance": 12345.6789}
+    ss_provider._client = mock_client
+
+    assert ss_provider.get_balance() == "$12,345.68"
+    assert ss_provider.get_balance(pretty_output=False) == 12345.6789
 
 
 @patch("requests.post")
@@ -77,6 +111,16 @@ def test_aqt_compile(mock_post: MagicMock) -> None:
     out = provider.aqt_compile([qc, qc])
     assert out.circuits == [qc, qc]
     assert not hasattr(out, "circuit") and not hasattr(out, "pulse_list")
+
+
+@patch(
+    "applications_superstaq.superstaq_client._SuperstaQClient.ibmq_compile",
+    return_value={"pulses": applications_superstaq.converters.serialize([mock.DEFAULT])},
+)
+def test_service_ibmq_compile(mock_ibmq_compile: MagicMock) -> None:
+    provider = qss.superstaq_provider.SuperstaQProvider(api_key="MY_TOKEN")
+    assert provider.ibmq_compile(qiskit.QuantumCircuit()) == mock.DEFAULT
+    assert provider.ibmq_compile([qiskit.QuantumCircuit()]) == [mock.DEFAULT]
 
 
 @patch("requests.post")
@@ -114,7 +158,6 @@ def test_qscout_compile(mock_post: MagicMock) -> None:
     out = provider.qscout_compile([qc, qc])
     assert out.circuits == [qc, qc]
 
-
 @patch("requests.post")
 def test_cq_compile(mock_post: MagicMock) -> None:
     provider = qss.superstaq_provider.SuperstaQProvider(api_key="MY_TOKEN")
@@ -136,3 +179,18 @@ def test_cq_compile(mock_post: MagicMock) -> None:
     }
     out = provider.cq_compile([qc, qc])
     assert out.circuits == [qc, qc]
+    
+@patch(
+    "applications_superstaq.superstaq_client._SuperstaQClient.neutral_atom_compile",
+    return_value={"pulses": applications_superstaq.converters.serialize([mock.DEFAULT])},
+)
+def test_neutral_atom_compile(mock_ibmq_compile: MagicMock) -> None:
+    provider = qss.superstaq_provider.SuperstaQProvider(api_key="MY_TOKEN")
+    assert provider.neutral_atom_compile(qiskit.QuantumCircuit()) == mock.DEFAULT
+    assert provider.neutral_atom_compile([qiskit.QuantumCircuit()]) == [mock.DEFAULT]
+
+    with mock.patch.dict("sys.modules", {"unittest": None}), pytest.raises(
+        applications_superstaq.SuperstaQModuleNotFoundException,
+        match="'neutral_atom_compile' requires module 'unittest'",
+    ):
+        _ = provider.neutral_atom_compile(qiskit.QuantumCircuit())

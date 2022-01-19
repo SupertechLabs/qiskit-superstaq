@@ -111,26 +111,10 @@ class SuperstaQProvider(
         return self.api_key
 
     def backends(self) -> List[qss.superstaq_backend.SuperstaQBackend]:
-        # needs to be fixed (#469)
-        backend_names = [
-            "aqt_device",
-            "ionq_device",
-            "rigetti_device",
-            "ibmq_botoga",
-            "ibmq_casablanca",
-            "ibmq_jakarta",
-            "ibmq_qasm_simulator",
-        ]
-
+        ss_backends = self._client.get_backends()["superstaq_backends"]
         backends = []
-
-        for name in backend_names:
-            backends.append(
-                qss.superstaq_backend.SuperstaQBackend(
-                    provider=self, remote_host=self.remote_host, backend=name
-                )
-            )
-
+        for backend_str in ss_backends["compile-and-run"]:
+            backends.append(self.get_backend(backend_str))
         return backends
 
     def _http_headers(self) -> dict:
@@ -167,6 +151,23 @@ class SuperstaQProvider(
 
         return compiler_output.read_json_aqt(json_dict, circuits_list)
 
+    def ibmq_compile(
+        self,
+        circuits: Union[qiskit.QuantumCircuit, List[qiskit.QuantumCircuit]],
+        target: str = "ibmq_qasm_simulator",
+    ) -> Union[qiskit.pulse.Schedule, List[qiskit.pulse.Schedule]]:
+        """Returns pulse schedule(s) for the given circuit(s) and target."""
+        serialized_circuits = qss.serialization.serialize_circuits(circuits)
+
+        json_dict = self._client.ibmq_compile(
+            {"qiskit_circuits": serialized_circuits, "backend": target}
+        )
+
+        pulses = applications_superstaq.converters.deserialize(json_dict["pulses"])
+        if isinstance(circuits, qiskit.QuantumCircuit):
+            return pulses[0]
+        return pulses
+
     def qscout_compile(
         self,
         circuits: Union[qiskit.QuantumCircuit, List[qiskit.QuantumCircuit]],
@@ -191,7 +192,7 @@ class SuperstaQProvider(
         from qiskit_superstaq import compiler_output
 
         return compiler_output.read_json_qscout(json_dict, circuits_list)
-
+      
     def cq_compile(
         self,
         circuits: Union[qiskit.QuantumCircuit, List[qiskit.QuantumCircuit]],
@@ -213,3 +214,28 @@ class SuperstaQProvider(
         from qiskit_superstaq import compiler_output
 
         return compiler_output.read_json_only_circuits(json_dict, circuits_list)
+      
+    def neutral_atom_compile(
+        self,
+        circuits: Union[qiskit.QuantumCircuit, List[qiskit.QuantumCircuit]],
+        target: str = "neutral_atom_qpu",
+    ) -> Union[qiskit.QuantumCircuit, List[qiskit.QuantumCircuit]]:
+        """Returns pulse schedule for the given circuit and target.
+
+        Pulser must be installed for returned object to correctly deserialize to a pulse schedule.
+        """
+        serialized_circuits = qss.serialization.serialize_circuits(circuits)
+
+        json_dict = self._client.neutral_atom_compile(
+            {"qiskit_circuits": serialized_circuits, "backend": target}
+        )
+        try:
+            pulses = applications_superstaq.converters.deserialize(json_dict["pulses"])
+        except ModuleNotFoundError as e:
+            raise applications_superstaq.SuperstaQModuleNotFoundException(
+                name=str(e.name), context="neutral_atom_compile"
+            )
+
+        if isinstance(circuits, qiskit.QuantumCircuit):
+            return pulses[0]
+        return pulses
