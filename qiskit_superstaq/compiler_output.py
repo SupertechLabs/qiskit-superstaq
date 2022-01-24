@@ -121,8 +121,7 @@ def read_json_only_circuits(json_dict: dict, circuits_list: bool) -> CompilerOut
         circuits_list: bool flag that controls whether the returned object has a .circuits
             attribute (if True) or a .circuit attribute (False)
     Returns:
-        a CompilerOutput object with the compiled circuit(s) and a list of
-        jaqal programs in a string representation.
+        a CompilerOutput object with the compiled circuit(s)
     """
     compiled_circuits = qiskit_superstaq.serialization.deserialize_circuits(
         json_dict["qiskit_circuits"]
