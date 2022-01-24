@@ -202,6 +202,7 @@ class SuperstaQProvider(
 
         Args:
             circuits: qiskit QuantumCircuit(s)
+            target: the hardware to compile for
         Returns:
             object whose .circuit(s) attribute is an optimized qiskit QuantumCircuit(s)
         """
