@@ -114,7 +114,7 @@ def read_json_qscout(json_dict: dict, circuits_list: bool) -> CompilerOutput:
 
 
 def read_json_only_circuits(json_dict: dict, circuits_list: bool) -> CompilerOutput:
-    """Reads out returned JSON from SuperstaQ API's CQ compilation endpoint.
+    """Reads JSON returned from SuperstaQ API's CQ compilation endpoint.
 
     Args:
         json_dict: a JSON dictionary matching the format returned by /cq_compile endpoint
