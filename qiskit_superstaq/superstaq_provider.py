@@ -141,7 +141,7 @@ class SuperstaQProvider(
             .pulse_list(s) attribute is the list(s) of cycles.
         """
         serialized_circuits = qss.serialization.serialize_circuits(circuits)
-        circuits_list = not isinstance(circuits, qiskit.QuantumCircuit)
+        circuits_is_list = not isinstance(circuits, qiskit.QuantumCircuit)
 
         json_dict = self._client.aqt_compile(
             {"qiskit_circuits": serialized_circuits, "backend": target}
@@ -149,7 +149,7 @@ class SuperstaQProvider(
 
         from qiskit_superstaq import compiler_output
 
-        return compiler_output.read_json_aqt(json_dict, circuits_list)
+        return compiler_output.read_json_aqt(json_dict, circuits_is_list)
 
     def ibmq_compile(
         self,
@@ -184,14 +184,14 @@ class SuperstaQProvider(
             .pulse_list(s) attribute is the list(s) of cycles.
         """
         serialized_circuits = qss.serialization.serialize_circuits(circuits)
-        circuits_list = not isinstance(circuits, qiskit.QuantumCircuit)
+        circuits_is_list = not isinstance(circuits, qiskit.QuantumCircuit)
         json_dict = self._client.qscout_compile(
             {"qiskit_circuits": serialized_circuits, "backend": target}
         )
 
         from qiskit_superstaq import compiler_output
 
-        return compiler_output.read_json_qscout(json_dict, circuits_list)
+        return compiler_output.read_json_qscout(json_dict, circuits_is_list)
 
     def cq_compile(
         self,
@@ -207,14 +207,14 @@ class SuperstaQProvider(
             object whose .circuit(s) attribute is an optimized qiskit QuantumCircuit(s)
         """
         serialized_circuits = qss.serialization.serialize_circuits(circuits)
-        circuits_list = not isinstance(circuits, qiskit.QuantumCircuit)
+        circuits_is_list = not isinstance(circuits, qiskit.QuantumCircuit)
         json_dict = self._client.cq_compile(
             {"qiskit_circuits": serialized_circuits, "backend": target}
         )
 
         from qiskit_superstaq import compiler_output
 
-        return compiler_output.read_json_only_circuits(json_dict, circuits_list)
+        return compiler_output.read_json_only_circuits(json_dict, circuits_is_list)
 
     def neutral_atom_compile(
         self,
