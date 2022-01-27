@@ -1,5 +1,5 @@
 import importlib
-from typing import Any, List, Optional, Union
+from typing import Any, cast, List, Optional, Union
 
 import applications_superstaq
 import qiskit
@@ -28,6 +28,7 @@ class CompilerOutput:
             self.circuits = circuits
             self.pulse_lists = pulse_lists
             self.jaqal_programs = jaqal_programs
+            self.schedule = cast(qiskit.pulse.Schedule, circuits)
 
         self.seq = seq
 
