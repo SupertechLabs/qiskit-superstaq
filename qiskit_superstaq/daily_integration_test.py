@@ -1,5 +1,6 @@
 """Integration checks that run daily (via Github action) between client and prod server."""
 import os
+from typing import cast
 
 import numpy as np
 import pytest
@@ -39,9 +40,10 @@ def test_ibmq_compile(provider: qiskit_superstaq.superstaq_provider.SuperstaQPro
     qc.append(qiskit_superstaq.AceCR("+-"), [0, 1])
     out = provider.ibmq_compile(qc, target="ibmq_jakarta_qpu")
     assert isinstance(out, qiskit_superstaq.compiler_output.CompilerOutput)
-    assert 800 <= out.circuits.duration <= 1000  # 896 as of 12/27/2021
-    assert out.circuits.start_time == 0
-    assert len(out.circuits) == 5
+    schedule = cast(qiskit.pulse.Schedule, out.circuits.duration)
+    assert 800 <= schedule.duration <= 1000  # 896 as of 12/27/2021
+    assert schedule.start_time == 0
+    assert len(schedule) == 5
 
 
 def test_aqt_compile(provider: qiskit_superstaq.superstaq_provider.SuperstaQProvider) -> None:
