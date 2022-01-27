@@ -38,7 +38,7 @@ def test_ibmq_compile(provider: qiskit_superstaq.superstaq_provider.SuperstaQPro
     qc = qiskit.QuantumCircuit(2)
     qc.append(qiskit_superstaq.AceCR("+-"), [0, 1])
     out = provider.ibmq_compile(qc, target="ibmq_jakarta_qpu")
-    assert isinstance(out, qiskit.pulse.Schedule)
+    assert isinstance(out, qiskit_superstaq.compiler_output.CompilerOutput)
     assert 800 <= out.duration <= 1000  # 896 as of 12/27/2021
     assert out.start_time == 0
     assert len(out) == 5
