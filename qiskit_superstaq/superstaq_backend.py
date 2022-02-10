@@ -79,7 +79,7 @@ class SuperstaQBackend(qiskit.providers.BackendV1):
 
         #  we make a virtual job_id that aggregates all of the individual jobs
         # into a single one, that comma-separates the individual jobs:
-        job_id = ",".join(result["job_ids"]) 
+        job_id = ",".join(result["job_ids"])
         job = qss.superstaq_job.SuperstaQJob(self, job_id)
 
         return job
