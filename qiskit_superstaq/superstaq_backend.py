@@ -15,8 +15,6 @@ from typing import Any, List, Optional, Union
 
 import qiskit
 
-# import requests
-
 import qiskit_superstaq as qss
 
 
@@ -63,9 +61,8 @@ class SuperstaQBackend(qiskit.providers.BackendV1):
     def run(
         self,
         circuits: Union[qiskit.QuantumCircuit, List[qiskit.QuantumCircuit]],
-        shots: Optional[int] = 1000,
+        shots: int,
         ibmq_pulse: Optional[bool] = None,
-        **kwargs: int
     ) -> "qss.superstaq_job.SuperstaQJob":
 
         if isinstance(circuits, qiskit.QuantumCircuit):
