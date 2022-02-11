@@ -33,6 +33,19 @@ def test_acecr() -> None:
     assert repr(gate) == "qiskit_superstaq.AceCR('-+', label='label')"
     assert str(gate) == "AceCR-+"
 
+    gate = qiskit_superstaq.AceCR("-+", sandwich_rx_rads=np.pi / 2)
+    _check_gate_definition(gate)
+    assert repr(gate) == "qiskit_superstaq.AceCR('-+', sandwich_rx_rads=1.5707963267948966)"
+    assert str(gate) == "AceCR-+|RXGate(pi/2)|"
+
+    gate = qiskit_superstaq.AceCR("-+", sandwich_rx_rads=np.pi / 2, label="label")
+    _check_gate_definition(gate)
+    assert (
+        repr(gate)
+        == "qiskit_superstaq.AceCR('-+', sandwich_rx_rads=1.5707963267948966, label='label')"
+    )
+    assert str(gate) == "AceCR-+|RXGate(pi/2)|"
+
     with pytest.raises(ValueError, match="Polarity must be"):
         _ = qiskit_superstaq.AceCR("++")
 
