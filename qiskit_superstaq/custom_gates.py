@@ -9,22 +9,23 @@ class AceCR(qiskit.circuit.Gate):
     """Active Cancellation Echoed Cross Resonance gate, supporting polarity switches and sandwiches.
 
     The typical AceCR in literature is a positive half-CR, then X on control, then negative half-CR.
+    Args:
+        polarity: should be either "+-" or "-+". Specifies if positive or negative half-CR is first
+        sandwich_rx_rads: angle of rotation for an rx gate simultaneously applied to the target
+            during the X on control
+        label: an optional label for the constructed Gate
     """
 
     def __init__(self, polarity: str, sandwich_rx_rads: float = 0, label: str = None) -> None:
-        """
-        Args:
-            polarity: should be either "+-" or "-+". Specifies if
-                positive or negative half-CR is first
-            sandwich_rx_rads: during the X on control, an rx gate can be simultaneously
-                applied to the target.
-            label: an optional label for the constructed Gate
-        """
         if polarity not in ("+-", "-+"):
             raise ValueError("Polarity must be either '+-' or '-+'")
 
         name = "acecr_" + polarity.replace("+", "p").replace("-", "m")
-        super().__init__(name, 2, [], label=label)
+        if sandwich_rx_rads:
+            super().__init__(name + "_rx", 2, [sandwich_rx_rads], label=label)
+        else:
+            super().__init__(name, 2, [], label=label)
+
         self.polarity = polarity
         self.sandwich_rx_rads = sandwich_rx_rads
 
