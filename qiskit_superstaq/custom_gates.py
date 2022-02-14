@@ -8,11 +8,12 @@ import qiskit
 class AceCR(qiskit.circuit.Gate):
     """Active Cancellation Echoed Cross Resonance gate, supporting polarity switches and sandwiches.
 
-    The typical AceCR in literature is a positive half-CR, then X on control, then negative half-CR.
+    The typical AceCR in literature is a positive half-CR, then X on "Z side", then negative
+    half-CR.  ("Z side" and "X side" refer to the two sides of the underlying ZX interactions).
     Args:
-        polarity: should be either "+-" or "-+". Specifies if positive or negative half-CR is first
-        sandwich_rx_rads: angle of rotation for an rx gate simultaneously applied to the target
-            during the X on control
+        polarity: Should be either "+-" or "-+". Specifies if positive or negative half-CR is first
+        sandwich_rx_rads: Angle of rotation for an rx gate applied to the "X side" simultaneously
+            with the X gate on the "Z side".
         label: an optional label for the constructed Gate
     """
 
