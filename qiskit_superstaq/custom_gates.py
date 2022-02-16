@@ -61,7 +61,10 @@ class AceCR(qiskit.circuit.Gate):
         )
 
         # sandwiched rx gate commutes and can just be multiplied with non-sandwiched part:
-        return mat @ np.kron(qiskit.circuit.library.RXGate(self.sandwich_rx_rads), np.eye(2))
+        return mat @ np.kron(
+            np.asarray(qiskit.circuit.library.RXGate(self.sandwich_rx_rads), dtype=dtype),
+            np.eye(2, dtype=dtype),
+        )
 
     def __repr__(self) -> str:
         args = f"'{self.polarity}'"
