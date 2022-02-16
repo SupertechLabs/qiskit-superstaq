@@ -14,7 +14,7 @@ class AceCR(qiskit.circuit.Gate):
         polarity: Should be either "+-" or "-+". Specifies if positive or negative half-CR is first
         sandwich_rx_rads: Angle of rotation for an rx gate applied to the "X side" simultaneously
             with the X gate on the "Z side".
-        label: an optional label for the constructed Gate
+        label: An optional label for the constructed Gate
     """
 
     def __init__(self, polarity: str, sandwich_rx_rads: float = 0, label: str = None) -> None:
