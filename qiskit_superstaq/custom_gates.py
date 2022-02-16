@@ -77,8 +77,8 @@ class AceCR(qiskit.circuit.Gate):
     def __str__(self) -> str:
         if not self.sandwich_rx_rads:
             return f"AceCR{self.polarity}"
-        args = qiskit.circuit.tools.pi_check(self.sandwich_rx_rads, ndigits=8, output="qasm")
-        return f"AceCR{self.polarity}|RXGate({args})|"
+        arg = qiskit.circuit.tools.pi_check(self.sandwich_rx_rads, ndigits=8, output="qasm")
+        return f"AceCR{self.polarity}|RXGate({arg})|"
 
 
 class ZZSwapGate(qiskit.circuit.Gate):
