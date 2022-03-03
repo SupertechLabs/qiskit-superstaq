@@ -57,7 +57,7 @@ def test_acer_non_neighbor_qubits_compile(
     assert isinstance(out.circuits, qiskit.pulse.Schedule)
     assert 5700 <= out.circuits.duration <= 5900  # 5824 as of 3/3/2022
     assert out.circuits.start_time == 0
-    assert len(out.circuits) == 76
+    assert len(out.circuits) == 67
 
 
 def test_aqt_compile(provider: qiskit_superstaq.superstaq_provider.SuperstaQProvider) -> None:
