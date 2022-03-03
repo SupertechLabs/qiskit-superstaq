@@ -55,7 +55,7 @@ def test_acer_non_neighbor_qubits_compile(
     out = provider.ibmq_compile(qc, target="ibmq_bogota_qpu")
     assert isinstance(out, qiskit_superstaq.compiler_output.CompilerOutput)
     assert isinstance(out.circuits, qiskit.pulse.Schedule)
-    assert 5000 <= out.circuits.duration <= 5200  # 5184 as of 2/25/2022
+    assert 5700 <= out.circuits.duration <= 5900  # 5824 as of 3/3/2022
     assert out.circuits.start_time == 0
     assert len(out.circuits) == 76
 
