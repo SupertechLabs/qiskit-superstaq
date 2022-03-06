@@ -15,22 +15,20 @@ except ModuleNotFoundError:
 class CompilerOutput:
     def __init__(
         self,
-        circuits: Union[
-            qiskit.QuantumCircuit,
-            qiskit.pulse.Schedule,
-            List[qiskit.QuantumCircuit],
-            List[qiskit.pulse.Schedule],
-        ],
+        circuits: Union[qiskit.QuantumCircuit, List[qiskit.QuantumCircuit]],
+        pulses: Union[qiskit.pulse.Schedule, List[qiskit.pulse.Schedule]] = None,
         seq: Optional["qtrl.sequencer.Sequence"] = None,
         jaqal_programs: List[str] = None,
         pulse_lists: Optional[Union[List[List], List[List[List]]]] = None,
     ) -> None:
         if isinstance(circuits, qiskit.QuantumCircuit):
             self.circuit = circuits
+            self.pulse = pulses
             self.pulse_list = pulse_lists
             self.jaqal_program = jaqal_programs
         else:
             self.circuits = circuits
+            self.pulses = pulses
             self.pulse_lists = pulse_lists
             self.jaqal_programs = jaqal_programs
 
@@ -58,12 +56,16 @@ class CompilerOutput:
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, CompilerOutput):
             return False
-        return (
-            self.circuits == other.circuits
-            and self.seq == other.seq
-            and self.jaqal_programs == other.jaqal_programs
-            and self.pulse_lists == other.pulse_lists
-        )
+
+        if hasattr(self, "circuits") and hasattr(other, "circuits"):
+            circuit_check = self.circuits == other.circuits
+            jaqal_check = self.jaqal_programs == other.jaqal_programs
+            pulse_list_check = self.pulse_lists == other.pulse_lists
+        else:
+            circuit_check = self.circuit == other.circuit
+            jaqal_check = self.jaqal_program == other.jaqal_program
+            pulse_list_check = self.pulse_list == other.pulse_list
+        return circuit_check and self.seq == other.seq and jaqal_check and pulse_list_check
 
 
 def read_json_aqt(json_dict: dict, circuits_is_list: bool) -> CompilerOutput:

@@ -7,6 +7,7 @@ import applications_superstaq
 import pytest
 import qiskit
 
+import qiskit_superstaq
 import qiskit_superstaq as qss
 
 
@@ -115,17 +116,22 @@ def test_aqt_compile(mock_post: MagicMock) -> None:
 
 @patch(
     "applications_superstaq.superstaq_client._SuperstaQClient.ibmq_compile",
-    return_value={"pulses": applications_superstaq.converters.serialize([mock.DEFAULT])},
 )
 def test_service_ibmq_compile(mock_ibmq_compile: MagicMock) -> None:
     provider = qss.superstaq_provider.SuperstaQProvider(api_key="MY_TOKEN")
+    qc = qiskit.QuantumCircuit(8)
+    qc.cz(4, 5)
+    mock_ibmq_compile.return_value = {
+        "qiskit_circuits": qiskit_superstaq.serialization.serialize_circuits(qc),
+        "pulses": applications_superstaq.converters.serialize([mock.DEFAULT]),
+    }
     from qiskit_superstaq import compiler_output
 
     assert provider.ibmq_compile(qiskit.QuantumCircuit()) == compiler_output.CompilerOutput(
-        mock.DEFAULT, None, None, None
+        qc, mock.DEFAULT, None, None, None
     )
     assert provider.ibmq_compile([qiskit.QuantumCircuit()]) == compiler_output.CompilerOutput(
-        [mock.DEFAULT], None, None, None
+        [qc], [mock.DEFAULT], None, None, None
     )
 
 
