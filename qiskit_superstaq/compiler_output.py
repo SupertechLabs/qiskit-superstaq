@@ -60,9 +60,11 @@ class CompilerOutput:
         if self.has_multiple_circuits() != other.has_multiple_circuits():
             return False
         elif self.has_multiple_circuits():
-            circuit_check = self.circuits == other.circuits
-            jaqal_check = self.jaqal_programs == other.jaqal_programs
-            pulse_list_check = self.pulse_lists == other.pulse_lists
+            return (
+                self.circuits == other.circuits
+                and self.jaqal_programs == other.jaqal_programs
+                and self.pulse_lists == other.pulse_lists
+            )
         else:
             circuit_check = self.circuit == other.circuit
             jaqal_check = self.jaqal_program == other.jaqal_program
