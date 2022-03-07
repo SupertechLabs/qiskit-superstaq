@@ -73,6 +73,7 @@ class CompilerOutput:
             and self.pulse_sequence == other.pulse_sequence
             and self.jaqal_program == other.jaqal_program
             and self.pulse_list == other.pulse_list
+            and self.seq == other.seq
         )
 
 
