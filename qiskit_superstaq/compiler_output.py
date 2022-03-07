@@ -65,6 +65,7 @@ class CompilerOutput:
                 and self.pulse_sequences == other.pulse_sequences
                 and self.jaqal_programs == other.jaqal_programs
                 and self.pulse_lists == other.pulse_lists
+                and self.seq == other.seq
             )
         else:
             circuit_check = self.circuit == other.circuit
