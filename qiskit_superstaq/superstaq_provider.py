@@ -165,9 +165,11 @@ class SuperstaQProvider(
 
         if isinstance(circuits, qiskit.QuantumCircuit):
             return qss.compiler_output.CompilerOutput(
-                circuits=compiled_circuits[0], pulses=pulses[0]
+                circuits=compiled_circuits[0], pulse_sequences=pulses[0]
             )
-        return qss.compiler_output.CompilerOutput(circuits=compiled_circuits, pulses=pulses)
+        return qss.compiler_output.CompilerOutput(
+            circuits=compiled_circuits, pulse_sequences=pulses
+        )
 
     def qscout_compile(
         self,
