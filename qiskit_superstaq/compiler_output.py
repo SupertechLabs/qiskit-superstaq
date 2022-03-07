@@ -67,17 +67,13 @@ class CompilerOutput:
                 and self.pulse_lists == other.pulse_lists
                 and self.seq == other.seq
             )
-        else:
-            circuit_check = self.circuit == other.circuit
-            pulse_sequence_check = self.pulse_sequence == other.pulse_sequence
-            jaqal_check = self.jaqal_program == other.jaqal_program
-            pulse_list_check = self.pulse_list == other.pulse_list
+
         return (
-            circuit_check
-            and pulse_sequence_check
-            and self.seq == other.seq
-            and jaqal_check
-            and pulse_list_check
+            self.circuit == other.circuit
+            and self.pulse_sequence == other.pulse_sequence
+            and self.pulse_sequence == other.pulse_sequence
+            and self.jaqal_program == other.jaqal_program
+            and self.pulse_list == other.pulse_list
         )
 
 
