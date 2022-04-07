@@ -5,6 +5,7 @@ from . import superstaq_job
 from . import superstaq_provider
 from ._version import __version__
 from .custom_gates import AceCR, ParallelGates, ZZSwapGate
+from .superstaq_provider import SuperstaQProvider
 
 __all__ = [
     "AceCR",
@@ -16,6 +17,7 @@ __all__ = [
     "superstaq_backend",
     "superstaq_job",
     "superstaq_provider",
+    "SuperstaQProvider",
     "ZZSwapGate",
     "__version__",
 ]

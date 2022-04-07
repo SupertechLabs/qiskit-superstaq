@@ -36,7 +36,7 @@ class SuperstaQProvider(
 
         import qiskit_superstaq as qss
 
-        ss_provider = qss.superstaq_provider.SuperstaQProvider('MY_TOKEN')
+        ss_provider = qss.superstaq_provider.SuperstaQProvider(api_key='MY_TOKEN')
 
         backend = ss_provider.get_backend('my_backend')
 
