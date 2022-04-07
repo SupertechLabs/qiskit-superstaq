@@ -36,7 +36,7 @@ class SuperstaQProvider(
 
         import qiskit_superstaq as qss
 
-        ss_provider = qss.superstaq_provider.SuperstaQProvider('MY_TOKEN')
+        ss_provider = qss.SuperstaQProvider('MY_TOKEN')
 
         backend = ss_provider.get_backend('my_backend')
 
@@ -102,15 +102,13 @@ class SuperstaQProvider(
         repr1 = f"<SuperstaQProvider(name={self._name}, "
         return repr1 + f"api_key={self.api_key})>"
 
-    def get_backend(self, backend: str) -> "qss.superstaq_backend.SuperstaQBackend":
-        return qss.superstaq_backend.SuperstaQBackend(
-            provider=self, remote_host=self.remote_host, backend=backend
-        )
+    def get_backend(self, backend: str) -> "qss.SuperstaQBackend":
+        return qss.SuperstaQBackend(provider=self, remote_host=self.remote_host, backend=backend)
 
     def get_access_token(self) -> Optional[str]:
         return self.api_key
 
-    def backends(self) -> List[qss.superstaq_backend.SuperstaQBackend]:
+    def backends(self) -> List[qss.SuperstaQBackend]:
         ss_backends = self._client.get_backends()["superstaq_backends"]
         backends = []
         for backend_str in ss_backends["compile-and-run"]:
