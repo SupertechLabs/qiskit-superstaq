@@ -1,20 +1,21 @@
 from ._init_vars import API_URL, API_VERSION
-from . import serialization  # noqa: I100; b/c ._init_vars need to be init first
+from . import compiler_output, serialization  # noqa: I100; b/c ._init_vars need to be init first
 from . import superstaq_backend
 from . import superstaq_job
 from . import superstaq_provider
 from ._version import __version__
-from .custom_gates import AceCR, FermionicSWAPGate, ParallelGates
+from .custom_gates import AceCR, ParallelGates, ZZSwapGate
 
 __all__ = [
     "AceCR",
     "API_URL",
     "API_VERSION",
-    "FermionicSWAPGate",
+    "compiler_output",
     "ParallelGates",
     "serialization",
     "superstaq_backend",
     "superstaq_job",
     "superstaq_provider",
+    "ZZSwapGate",
     "__version__",
 ]

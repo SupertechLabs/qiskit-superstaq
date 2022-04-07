@@ -27,25 +27,42 @@ def test_acecr() -> None:
     _check_gate_definition(gate)
     assert repr(gate) == "qiskit_superstaq.AceCR('+-')"
     assert str(gate) == "AceCR+-"
+    assert gate.qasm() == "acecr_pm"
 
     gate = qiskit_superstaq.AceCR("-+", label="label")
     _check_gate_definition(gate)
     assert repr(gate) == "qiskit_superstaq.AceCR('-+', label='label')"
     assert str(gate) == "AceCR-+"
+    assert gate.qasm() == "acecr_mp"
+
+    gate = qiskit_superstaq.AceCR("-+", sandwich_rx_rads=np.pi / 2)
+    _check_gate_definition(gate)
+    assert repr(gate) == "qiskit_superstaq.AceCR('-+', sandwich_rx_rads=1.5707963267948966)"
+    assert str(gate) == "AceCR-+|RXGate(pi/2)|"
+    assert gate.qasm() == "acecr_mp_rx(pi/2)"
+
+    gate = qiskit_superstaq.AceCR("-+", sandwich_rx_rads=np.pi / 2, label="label")
+    _check_gate_definition(gate)
+    assert (
+        repr(gate)
+        == "qiskit_superstaq.AceCR('-+', sandwich_rx_rads=1.5707963267948966, label='label')"
+    )
+    assert str(gate) == "AceCR-+|RXGate(pi/2)|"
+    assert gate.qasm() == "acecr_mp_rx(pi/2)"
 
     with pytest.raises(ValueError, match="Polarity must be"):
         _ = qiskit_superstaq.AceCR("++")
 
 
-def test_fermionic_swap() -> None:
-    gate = qiskit_superstaq.FermionicSWAPGate(1.23)
+def test_zz_swap() -> None:
+    gate = qiskit_superstaq.ZZSwapGate(1.23)
     _check_gate_definition(gate)
-    assert repr(gate) == "qiskit_superstaq.FermionicSWAPGate(1.23)"
-    assert str(gate) == "FermionicSWAPGate(1.23)"
+    assert repr(gate) == "qiskit_superstaq.ZZSwapGate(1.23)"
+    assert str(gate) == "ZZSwapGate(1.23)"
 
-    gate = qiskit_superstaq.FermionicSWAPGate(4.56, label="label")
-    assert repr(gate) == "qiskit_superstaq.FermionicSWAPGate(4.56, label='label')"
-    assert str(gate) == "FermionicSWAPGate(4.56)"
+    gate = qiskit_superstaq.ZZSwapGate(4.56, label="label")
+    assert repr(gate) == "qiskit_superstaq.ZZSwapGate(4.56, label='label')"
+    assert str(gate) == "ZZSwapGate(4.56)"
 
 
 def test_parallel_gates() -> None:
@@ -75,11 +92,11 @@ def test_parallel_gates() -> None:
 
     gate = qiskit_superstaq.ParallelGates(
         qiskit.circuit.library.XGate(),
-        qiskit_superstaq.FermionicSWAPGate(1.23),
+        qiskit_superstaq.ZZSwapGate(1.23),
         qiskit.circuit.library.ZGate(),
         label="label",
     )
-    assert str(gate) == "ParallelGates(x, fermionic_swap(1.23), z)"
+    assert str(gate) == "ParallelGates(x, zzswap(1.23), z)"
     _check_gate_definition(gate)
 
     # confirm gates are applied to disjoint qubits
@@ -96,7 +113,7 @@ def test_parallel_gates() -> None:
 def test_custom_resolver() -> None:
     gates = [
         qiskit_superstaq.AceCR("+-"),
-        qiskit_superstaq.FermionicSWAPGate(1.23),
+        qiskit_superstaq.ZZSwapGate(1.23),
         qiskit_superstaq.ParallelGates(
             qiskit.circuit.library.RXGate(4.56),
             qiskit.circuit.library.CXGate(),
