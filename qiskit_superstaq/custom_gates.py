@@ -1,8 +1,10 @@
 import functools
-from typing import Optional, Type
+from typing import Optional, Type, Union
 
 import numpy as np
 import qiskit
+from qiskit.circuit import ControlledGate
+from qiskit.circuit.library import SGate, XGate
 
 
 class AceCR(qiskit.circuit.Gate):
@@ -183,6 +185,94 @@ class ParallelGates(qiskit.circuit.Gate):
         return f"ParallelGates({args})"
 
 
+class IITOFFOLIGate(ControlledGate):
+    def __init__(self, label: Optional[str] = None, ctrl_state: Optional[Union[str, int]] = None):
+        """Create new CCX gate."""
+        super().__init__(
+            "iitoffoli",
+            3,
+            [],
+            num_ctrl_qubits=2,
+            label=label,
+            ctrl_state=ctrl_state,
+            base_gate=XGate(),
+        )
+
+    def _define(self) -> None:
+        qc = qiskit.QuantumCircuit(3, name="iitoffoli")
+        csgate = SGate().control(1)
+        qc.x(0)
+        qc.x(1)
+        qc.ccx(0, 1, 2)
+        qc.append(csgate, [0, 1])
+        qc.x(0)
+        qc.x(1)
+        self.definition = qc
+
+    def inverse(self) -> ControlledGate:
+        return IITOFFOLIdgGate(ctrl_state=self.ctrl_state)
+
+    def __array__(self, dtype: Type = None) -> np.ndarray:
+        return np.array(
+            [
+                [0, 0, 0, 0, 1j, 0, 0, 0],
+                [0, 1, 0, 0, 0, 0, 0, 0],
+                [0, 0, 1, 0, 0, 0, 0, 0],
+                [0, 0, 0, 1, 0, 0, 0, 0],
+                [1j, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 1, 0, 0],
+                [0, 0, 0, 0, 0, 0, 1, 0],
+                [0, 0, 0, 0, 0, 0, 0, 1],
+            ],
+            dtype=dtype,
+        )
+
+    def __repr__(self) -> str:
+        return f"qiskit_superstaq.IITOFFOLIGate(label={self.label}, ctrl_state={self.ctrl_state})"
+
+    def __str__(self) -> str:
+        return f"IITOFFOLIGate(label={self.label}, ctrl_state={self.ctrl_state})"
+
+
+class IITOFFOLIdgGate(ControlledGate):
+    def __init__(self, label: Optional[str] = None, ctrl_state: Optional[Union[str, int]] = None):
+        super().__init__(
+            "iitoffoli",
+            3,
+            [],
+            num_ctrl_qubits=2,
+            label=label,
+            ctrl_state=ctrl_state,
+            base_gate=XGate(),
+        )
+
+    def __array__(self, dtype: Type = None) -> np.ndarray:
+        return np.array(
+            [
+                [0, 0, 0, 0, -1j, 0, 0, 0],
+                [0, 1, 0, 0, 0, 0, 0, 0],
+                [0, 0, 1, 0, 0, 0, 0, 0],
+                [0, 0, 0, 1, 0, 0, 0, 0],
+                [-1j, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 1, 0, 0],
+                [0, 0, 0, 0, 0, 0, 1, 0],
+                [0, 0, 0, 0, 0, 0, 0, 1],
+            ],
+            dtype=dtype,
+        )
+
+    def _define(self) -> None:
+        qc = qiskit.QuantumCircuit(3, name="iitoffoli")
+        csgate = SGate().control(1).inverse()
+        qc.x(0)
+        qc.x(1)
+        qc.ccx(0, 1, 2).inverse()
+        qc.append(csgate, [0, 1])
+        qc.x(0)
+        qc.x(1)
+        self.definition = qc
+
+
 def custom_resolver(gate: qiskit.circuit.Gate) -> Optional[qiskit.circuit.Gate]:
     """Recover a custom gate type from a generic qiskit.circuit.Gate. Resolution is done using
     gate.definition.name rather than gate.name, as the former is set by all qiskit_superstaq
@@ -200,4 +290,6 @@ def custom_resolver(gate: qiskit.circuit.Gate) -> Optional[qiskit.circuit.Gate]:
     if gate.definition.name == "parallel_gates":
         component_gates = [custom_resolver(inst) or inst for inst, _, _ in gate.definition]
         return ParallelGates(*component_gates, label=gate.label)
+    if gate.definition.name == "iitoffoli":
+        return IITOFFOLIGate(label=gate.label)
     return None

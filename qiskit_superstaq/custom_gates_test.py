@@ -110,10 +110,18 @@ def test_parallel_gates() -> None:
         _ = qiskit_superstaq.ParallelGates(qiskit.circuit.Measure())
 
 
+def test_iitoffoli() -> None:
+    gate = qiskit_superstaq.IITOFFOLIGate()
+    _check_gate_definition(gate)
+    assert repr(gate) == "qiskit_superstaq.IITOFFOLIGate(label=None, ctrl_state=3)"
+    assert str(gate) == "IITOFFOLIGate(label=None, ctrl_state=3)"
+
+
 def test_custom_resolver() -> None:
     gates = [
         qiskit_superstaq.AceCR("+-"),
         qiskit_superstaq.ZZSwapGate(1.23),
+        qiskit_superstaq.IITOFFOLIGate(),
         qiskit_superstaq.ParallelGates(
             qiskit.circuit.library.RXGate(4.56),
             qiskit.circuit.library.CXGate(),
