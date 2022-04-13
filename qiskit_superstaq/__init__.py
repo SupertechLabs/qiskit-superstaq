@@ -4,7 +4,15 @@ from . import superstaq_backend
 from . import superstaq_job
 from . import superstaq_provider
 from ._version import __version__
-from .custom_gates import AceCR, ICCXdgGate, ICCXGate, ITOFFOLIGate, ParallelGates, ZZSwapGate
+from .custom_gates import (
+    AceCR,
+    ICCXdgGate,
+    ICCXGate,
+    IICCX,
+    ITOFFOLIGate,
+    ParallelGates,
+    ZZSwapGate,
+)
 
 __all__ = [
     "AceCR",
@@ -13,6 +21,7 @@ __all__ = [
     "compiler_output",
     "ICCXGate",
     "ICCXdgGate",
+    "IICCX",
     "ITOFFOLIGate",
     "ParallelGates",
     "serialization",

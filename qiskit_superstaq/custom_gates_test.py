@@ -113,8 +113,25 @@ def test_parallel_gates() -> None:
 def test_iccx() -> None:
     gate = qiskit_superstaq.ICCXGate()
     _check_gate_definition(gate)
+
     assert repr(gate) == "qiskit_superstaq.ICCXGate(label=None, ctrl_state=3)"
     assert str(gate) == "ICCXGate(label=None, ctrl_state=3)"
+
+
+def test_iiccx_unitary() -> None:
+    correct_unitary = np.array(
+        [
+            [0, 0, 0, 0, 1j, 0, 0, 0],
+            [0, 1, 0, 0, 0, 0, 0, 0],
+            [0, 0, 1, 0, 0, 0, 0, 0],
+            [0, 0, 0, 1, 0, 0, 0, 0],
+            [1j, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 1, 0, 0],
+            [0, 0, 0, 0, 0, 0, 1, 0],
+            [0, 0, 0, 0, 0, 0, 0, 1],
+        ],
+    )
+    assert np.allclose(qiskit_superstaq.IICCX.to_matrix(), correct_unitary)
 
 
 def test_iccxdg() -> None:
