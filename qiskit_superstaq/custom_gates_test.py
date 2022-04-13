@@ -11,13 +11,13 @@ def _check_gate_definition(gate: qiskit.circuit.Gate) -> None:
     """Check gate.definition, gate.__array__(), and gate.inverse() against one another"""
 
     assert np.allclose(gate.to_matrix(), gate.__array__())
-
     defined_operation = qiskit.quantum_info.Operator(gate.definition)
     assert defined_operation.is_unitary()
     assert defined_operation.equiv(gate.to_matrix(), atol=1e-10)
 
     inverse_operation = qiskit.quantum_info.Operator(gate.inverse().definition)
     assert inverse_operation.is_unitary()
+
     assert inverse_operation.equiv(gate.inverse().to_matrix(), atol=1e-10)
     assert inverse_operation.equiv(gate.to_matrix().T.conj(), atol=1e-10)
 
@@ -110,18 +110,25 @@ def test_parallel_gates() -> None:
         _ = qiskit_superstaq.ParallelGates(qiskit.circuit.Measure())
 
 
-def test_iitoffoli() -> None:
-    gate = qiskit_superstaq.IITOFFOLIGate()
+def test_iccx() -> None:
+    gate = qiskit_superstaq.ICCXGate()
     _check_gate_definition(gate)
-    assert repr(gate) == "qiskit_superstaq.IITOFFOLIGate(label=None, ctrl_state=3)"
-    assert str(gate) == "IITOFFOLIGate(label=None, ctrl_state=3)"
+    assert repr(gate) == "qiskit_superstaq.ICCXGate(label=None, ctrl_state=3)"
+    assert str(gate) == "ICCXGate(label=None, ctrl_state=3)"
+
+
+def test_iccxdg() -> None:
+    gate = qiskit_superstaq.ICCXdgGate()
+    _check_gate_definition(gate)
+    assert repr(gate) == "qiskit_superstaq.ICCXdgGate(label=None, ctrl_state=3)"
+    assert str(gate) == "ICCXdgGate(label=None, ctrl_state=3)"
 
 
 def test_custom_resolver() -> None:
     gates = [
         qiskit_superstaq.AceCR("+-"),
         qiskit_superstaq.ZZSwapGate(1.23),
-        qiskit_superstaq.IITOFFOLIGate(),
+        qiskit_superstaq.ICCXGate(),
         qiskit_superstaq.ParallelGates(
             qiskit.circuit.library.RXGate(4.56),
             qiskit.circuit.library.CXGate(),

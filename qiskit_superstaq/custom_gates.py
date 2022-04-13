@@ -4,7 +4,7 @@ from typing import Optional, Type, Union
 import numpy as np
 import qiskit
 from qiskit.circuit import ControlledGate
-from qiskit.circuit.library import SGate, XGate
+from qiskit.circuit.library import CCXGate, RXGate
 
 
 class AceCR(qiskit.circuit.Gate):
@@ -185,92 +185,83 @@ class ParallelGates(qiskit.circuit.Gate):
         return f"ParallelGates({args})"
 
 
-class IITOFFOLIGate(ControlledGate):
+class ICCXGate(CCXGate, ControlledGate):
     def __init__(self, label: Optional[str] = None, ctrl_state: Optional[Union[str, int]] = None):
-        """Create new CCX gate."""
-        super().__init__(
-            "iitoffoli",
+        ControlledGate.__init__(
+            self,
+            "iccx",
             3,
-            [],
+            [-np.pi],
             num_ctrl_qubits=2,
             label=label,
             ctrl_state=ctrl_state,
-            base_gate=XGate(),
+            base_gate=RXGate(-np.pi),
         )
 
     def _define(self) -> None:
-        qc = qiskit.QuantumCircuit(3, name="iitoffoli")
-        csgate = SGate().control(1)
-        qc.x(0)
-        qc.x(1)
+        qc = qiskit.QuantumCircuit(3, name="iccx")
+
+        if not self.ctrl_state & 2:
+            qc.x(0)
+        if not self.ctrl_state & 1:
+            qc.x(1)
         qc.ccx(0, 1, 2)
         qc.cp(np.pi / 2, 0, 1)
-        qc.x(0)
-        qc.x(1)
+        if not self.ctrl_state & 2:
+            qc.x(0)
+        if not self.ctrl_state & 1:
+            qc.x(1)
         self.definition = qc
 
     def inverse(self) -> ControlledGate:
-        return IITOFFOLIdgGate(ctrl_state=self.ctrl_state)
-
-    def __array__(self, dtype: Type = None) -> np.ndarray:
-        return np.array(
-            [
-                [0, 0, 0, 0, 1j, 0, 0, 0],
-                [0, 1, 0, 0, 0, 0, 0, 0],
-                [0, 0, 1, 0, 0, 0, 0, 0],
-                [0, 0, 0, 1, 0, 0, 0, 0],
-                [1j, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 1, 0, 0],
-                [0, 0, 0, 0, 0, 0, 1, 0],
-                [0, 0, 0, 0, 0, 0, 0, 1],
-            ],
-            dtype=dtype,
-        )
+        return ICCXdgGate(ctrl_state=self.ctrl_state)
 
     def __repr__(self) -> str:
-        return f"qiskit_superstaq.IITOFFOLIGate(label={self.label}, ctrl_state={self.ctrl_state})"
+        return f"qiskit_superstaq.ICCXGate(label={self.label}, ctrl_state={self.ctrl_state})"
 
     def __str__(self) -> str:
-        return f"IITOFFOLIGate(label={self.label}, ctrl_state={self.ctrl_state})"
+        return f"ICCXGate(label={self.label}, ctrl_state={self.ctrl_state})"
 
 
-class IITOFFOLIdgGate(ControlledGate):
+class ICCXdgGate(ICCXGate, ControlledGate):
     def __init__(self, label: Optional[str] = None, ctrl_state: Optional[Union[str, int]] = None):
-        super().__init__(
-            "iitoffoli",
+        ControlledGate.__init__(
+            self,
+            "iccxdg",
             3,
-            [],
+            [np.pi],
             num_ctrl_qubits=2,
             label=label,
             ctrl_state=ctrl_state,
-            base_gate=XGate(),
-        )
-
-    def __array__(self, dtype: Type = None) -> np.ndarray:
-        return np.array(
-            [
-                [0, 0, 0, 0, -1j, 0, 0, 0],
-                [0, 1, 0, 0, 0, 0, 0, 0],
-                [0, 0, 1, 0, 0, 0, 0, 0],
-                [0, 0, 0, 1, 0, 0, 0, 0],
-                [-1j, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 1, 0, 0],
-                [0, 0, 0, 0, 0, 0, 1, 0],
-                [0, 0, 0, 0, 0, 0, 0, 1],
-            ],
-            dtype=dtype,
+            base_gate=RXGate(np.pi),
         )
 
     def _define(self) -> None:
-        qc = qiskit.QuantumCircuit(3, name="iitoffoli")
-        csgate = SGate().control(1).inverse()
-        qc.x(0)
-        qc.x(1)
+        qc = qiskit.QuantumCircuit(3, name="iccxdg")
+        if not self.ctrl_state & 2:
+            qc.x(0)
+        if not self.ctrl_state & 1:
+            qc.x(1)
         qc.ccx(0, 1, 2).inverse()
-        qc.append(csgate, [0, 1])
-        qc.x(0)
-        qc.x(1)
+        qc.cp(-np.pi / 2, 0, 1)
+        if not self.ctrl_state & 2:
+            qc.x(0)
+        if not self.ctrl_state & 1:
+            qc.x(1)
         self.definition = qc
+
+    def inverse(self) -> ControlledGate:
+        return ICCXGate(ctrl_state=self.ctrl_state)
+
+    def __repr__(self) -> str:
+        return f"qiskit_superstaq.ICCXdgGate(label={self.label}, ctrl_state={self.ctrl_state})"
+
+    def __str__(self) -> str:
+        return f"ICCXdgGate(label={self.label}, ctrl_state={self.ctrl_state})"
+
+
+ITOFFOLIGate = ICCXGate
+IIToffoli = IICCX = ICCXGate(ctrl_state="00")
 
 
 def custom_resolver(gate: qiskit.circuit.Gate) -> Optional[qiskit.circuit.Gate]:
@@ -290,6 +281,6 @@ def custom_resolver(gate: qiskit.circuit.Gate) -> Optional[qiskit.circuit.Gate]:
     if gate.definition.name == "parallel_gates":
         component_gates = [custom_resolver(inst) or inst for inst, _, _ in gate.definition]
         return ParallelGates(*component_gates, label=gate.label)
-    if gate.definition.name == "iitoffoli":
-        return IITOFFOLIGate(label=gate.label)
+    if gate.definition.name == "iccx":
+        return ICCXGate(label=gate.label)
     return None
