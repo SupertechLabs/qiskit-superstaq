@@ -204,7 +204,7 @@ class IITOFFOLIGate(ControlledGate):
         qc.x(0)
         qc.x(1)
         qc.ccx(0, 1, 2)
-        qc.append(csgate, [0, 1])
+        qc.cp(np.pi / 2, 0, 1)
         qc.x(0)
         qc.x(1)
         self.definition = qc
