@@ -279,7 +279,7 @@ def custom_resolver(gate: qiskit.circuit.Gate) -> Optional[qiskit.circuit.Gate]:
         component_gates = [custom_resolver(inst) or inst for inst, _, _ in gate.definition]
         return ParallelGates(*component_gates, label=gate.label)
     if (
-        gate.definition.name == "iccx"
+        gate.name == "iccx"
         or gate.name == "iccx_o0"
         or gate.name == "iccx_o1"
         or gate.name == "iccx_o2"
