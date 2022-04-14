@@ -9,8 +9,8 @@ from .custom_gates import (
     ICCXdgGate,
     ICCXGate,
     IICCX,
-    ITOFFOLIGate,
     IITOFFOLI,
+    ITOFFOLIGate,
     ParallelGates,
     ZZSwapGate,
 )

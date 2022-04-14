@@ -278,12 +278,11 @@ def custom_resolver(gate: qiskit.circuit.Gate) -> Optional[qiskit.circuit.Gate]:
     if gate.definition.name == "parallel_gates":
         component_gates = [custom_resolver(inst) or inst for inst, _, _ in gate.definition]
         return ParallelGates(*component_gates, label=gate.label)
-    if gate.definition.name == "iccx":
-        return ICCXGate(label=gate.label)
-    if gate.name == "iccx_o0":
-        return ICCXGate(label=gate.label, ctrl_state="00")
-    if gate.name == "iccx_o1":
-        return ICCXGate(label=gate.label, ctrl_state="01")
-    if gate.name == "iccx_o2":
-        return ICCXGate(label=gate.label, ctrl_state="10")
+    if (
+        gate.definition.name == "iccx"
+        or gate.name == "iccx_o0"
+        or gate.name == "iccx_o1"
+        or gate.name == "iccx_o2"
+    ):
+        return ICCXGate(label=gate.label, ctrl_state=gate.ctrl_state)
     return None
