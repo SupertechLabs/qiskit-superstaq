@@ -146,6 +146,9 @@ def test_custom_resolver() -> None:
         qiskit_superstaq.AceCR("+-"),
         qiskit_superstaq.ZZSwapGate(1.23),
         qiskit_superstaq.ICCXGate(),
+        qiskit_superstaq.ICCXGate(ctrl_state="00"),
+        qiskit_superstaq.ICCXGate(ctrl_state="01"),
+        qiskit_superstaq.ICCXGate(ctrl_state="10"),
         qiskit_superstaq.ParallelGates(
             qiskit.circuit.library.RXGate(4.56),
             qiskit.circuit.library.CXGate(),

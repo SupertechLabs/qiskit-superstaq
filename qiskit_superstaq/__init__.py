@@ -10,6 +10,7 @@ from .custom_gates import (
     ICCXGate,
     IICCX,
     ITOFFOLIGate,
+    IITOFFOLI,
     ParallelGates,
     ZZSwapGate,
 )
@@ -22,6 +23,7 @@ __all__ = [
     "ICCXGate",
     "ICCXdgGate",
     "IICCX",
+    "IITOFFOLI",
     "ITOFFOLIGate",
     "ParallelGates",
     "serialization",
