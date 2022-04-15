@@ -204,7 +204,7 @@ class ICCXGate(qiskit.circuit.ControlledGate):
         self.definition = qc
 
     def inverse(self) -> qiskit.circuit.ControlledGate:
-        return ICCXdgGate(ctrl_state=self.ctrl_state)  # self-inverse
+        return ICCXdgGate(ctrl_state=self.ctrl_state)
 
     def __array__(self, dtype: Optional[np.ndarray] = None) -> np.ndarray:
         mat = qiskit.circuit._utils._compute_control_matrix(
