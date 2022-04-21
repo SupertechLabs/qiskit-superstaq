@@ -117,8 +117,10 @@ def test_iccx() -> None:
     assert repr(gate) == "qiskit_superstaq.ICCXGate(label=None, ctrl_state=3)"
     assert str(gate) == "ICCXGate(label=None, ctrl_state=3)"
 
+    qc = qiskit.QuantumCircuit(3)
 
-def test_iiccx_unitary() -> None:
+    qc.append(qiskit_superstaq.IICCX(), [0, 1, 2])
+
     correct_unitary = np.array(
         [
             [0, 0, 0, 0, 1j, 0, 0, 0],
@@ -131,7 +133,8 @@ def test_iiccx_unitary() -> None:
             [0, 0, 0, 0, 0, 0, 0, 1],
         ],
     )
-    assert np.allclose(qiskit_superstaq.IICCX.to_matrix(), correct_unitary)
+
+    np.allclose(qiskit.quantum_info.Operator(qc), correct_unitary)
 
 
 def test_iccxdg() -> None:
