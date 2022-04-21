@@ -119,7 +119,7 @@ def test_iccx() -> None:
 
     qc = qiskit.QuantumCircuit(3)
 
-    qc.append(qiskit_superstaq.IICCX(), [0, 1, 2])
+    qc.append(qiskit_superstaq.IICCXGate(), [0, 1, 2])
 
     correct_unitary = np.array(
         [
