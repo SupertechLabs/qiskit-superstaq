@@ -262,7 +262,6 @@ class ICCXdgGate(qiskit.circuit.ControlledGate):
         return f"ICCXdgGate(label={self.label}, ctrl_state={self.ctrl_state})"
 
 
-ITOFFOLIGate = ICCXGate
 AQTiToffoliGate = AQTiCCXGate
 
 
