@@ -20,8 +20,6 @@ __all__ = [
     "AQTiCCXGate",
     "AQTiToffoliGate",
     "compiler_output",
-    "ICCXGate",
-    "ICCXdgGate",
     "ITOFFOLIGate",
     "ParallelGates",
     "serialization",
