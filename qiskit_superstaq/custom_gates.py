@@ -221,7 +221,7 @@ class ICCXGate(qiskit.circuit.ControlledGate):
         return f"ICCXGate(label={self.label}, ctrl_state={self.ctrl_state})"
 
 
-class IICCXGate(ICCXGate):
+class AQTiCCXGate(ICCXGate):
     def __init__(self, label: Optional[str] = None) -> None:
         super().__init__(label=label, ctrl_state="00")
 
@@ -263,7 +263,7 @@ class ICCXdgGate(qiskit.circuit.ControlledGate):
 
 
 ITOFFOLIGate = ICCXGate
-IITOFFOLIGate = IICCXGate
+AQTiToffoliGate = AQTiCCXGate
 
 
 def custom_resolver(gate: qiskit.circuit.Gate) -> Optional[qiskit.circuit.Gate]:
@@ -286,7 +286,7 @@ def custom_resolver(gate: qiskit.circuit.Gate) -> Optional[qiskit.circuit.Gate]:
     if gate.name == "iccx":
         return ICCXGate(label=gate.label)
     if gate.name == "iccx_o0":
-        return IICCXGate(label=gate.label)
+        return AQTiCCXGate(label=gate.label)
     if gate.name == "iccx_o1":
         return ICCXGate(label=gate.label, ctrl_state="01")
     if gate.name == "iccx_o2":
