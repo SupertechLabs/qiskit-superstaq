@@ -222,8 +222,8 @@ class ICCXGate(qiskit.circuit.ControlledGate):
 
 
 class IICCXGate(ICCXGate):
-    def __init__(self) -> None:
-        super().__init__(ctrl_state="00")
+    def __init__(self, label: Optional[str] = None) -> None:
+        super().__init__(label=label, ctrl_state="00")
 
 
 class ICCXdgGate(qiskit.circuit.ControlledGate):
