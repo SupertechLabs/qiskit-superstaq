@@ -183,7 +183,7 @@ class ParallelGates(qiskit.circuit.Gate):
         return f"ParallelGates({args})"
 
 
-class ICCXGate(qiskit.circuit.ControlledGate):
+class AQTiCCXGate(qiskit.circuit.ControlledGate):
     def __init__(
         self, label: Optional[np.ndarray] = None, ctrl_state: Optional[Union[str, int]] = None
     ) -> None:
@@ -204,7 +204,7 @@ class ICCXGate(qiskit.circuit.ControlledGate):
         self.definition = qc
 
     def inverse(self) -> qiskit.circuit.ControlledGate:
-        return ICCXdgGate(ctrl_state=self.ctrl_state)
+        return AQTiCCXdgGate(ctrl_state=self.ctrl_state)
 
     def __array__(self, dtype: Optional[np.ndarray] = None) -> np.ndarray:
         mat = qiskit.circuit._utils._compute_control_matrix(
@@ -221,7 +221,7 @@ class ICCXGate(qiskit.circuit.ControlledGate):
         return f"ICCXGate(label={self.label}, ctrl_state={self.ctrl_state})"
 
 
-class ICCXdgGate(qiskit.circuit.ControlledGate):
+class AQTiCCXdgGate(qiskit.circuit.ControlledGate):
     def __init__(self, label: str = None, ctrl_state: Optional[Union[str, int]] = None) -> None:
         super().__init__(
             "iccxdg",
@@ -240,7 +240,7 @@ class ICCXdgGate(qiskit.circuit.ControlledGate):
         self.definition = qc
 
     def inverse(self) -> qiskit.circuit.ControlledGate:
-        return ICCXGate(ctrl_state=self.ctrl_state)
+        return AQTiCCXGate(ctrl_state=self.ctrl_state)
 
     def __array__(self, dtype: Optional[np.dtype] = None) -> np.ndarray:
         mat = qiskit.circuit._utils._compute_control_matrix(
@@ -257,8 +257,8 @@ class ICCXdgGate(qiskit.circuit.ControlledGate):
         return f"ICCXdgGate(label={self.label}, ctrl_state={self.ctrl_state})"
 
 
-ITOFFOLIGate = ICCXGate
-IITOFFOLI = IICCX = ICCXGate(ctrl_state="00")
+AQTiToffoliGate = AQTiCCXGate
+AQTiToffoli = AQTiCCX = AQTiCCXGate(ctrl_state="00")
 
 
 def custom_resolver(gate: qiskit.circuit.Gate) -> Optional[qiskit.circuit.Gate]:
@@ -279,11 +279,11 @@ def custom_resolver(gate: qiskit.circuit.Gate) -> Optional[qiskit.circuit.Gate]:
         component_gates = [custom_resolver(inst) or inst for inst, _, _ in gate.definition]
         return ParallelGates(*component_gates, label=gate.label)
     if gate.name == "iccx":
-        return ICCXGate(label=gate.label)
+        return AQTiCCXGate(label=gate.label)
     if gate.name == "iccx_o0":
-        return ICCXGate(label=gate.label, ctrl_state="00")
+        return AQTiCCXGate(label=gate.label, ctrl_state="00")
     if gate.name == "iccx_o1":
-        return ICCXGate(label=gate.label, ctrl_state="01")
+        return AQTiCCXGate(label=gate.label, ctrl_state="01")
     if gate.name == "iccx_o2":
-        return ICCXGate(label=gate.label, ctrl_state="10")
+        return AQTiCCXGate(label=gate.label, ctrl_state="10")
     return None

@@ -111,7 +111,7 @@ def test_parallel_gates() -> None:
 
 
 def test_iccx() -> None:
-    gate = qiskit_superstaq.ICCXGate()
+    gate = qiskit_superstaq.AQTiCCXGate()
     _check_gate_definition(gate)
 
     assert repr(gate) == "qiskit_superstaq.ICCXGate(label=None, ctrl_state=3)"
@@ -131,11 +131,11 @@ def test_iiccx_unitary() -> None:
             [0, 0, 0, 0, 0, 0, 0, 1],
         ],
     )
-    assert np.allclose(qiskit_superstaq.IICCX.to_matrix(), correct_unitary)
+    assert np.allclose(qiskit_superstaq.AQTiCCX.to_matrix(), correct_unitary)
 
 
 def test_iccxdg() -> None:
-    gate = qiskit_superstaq.ICCXdgGate()
+    gate = qiskit_superstaq.AQTiCCXdgGate()
     _check_gate_definition(gate)
     assert repr(gate) == "qiskit_superstaq.ICCXdgGate(label=None, ctrl_state=3)"
     assert str(gate) == "ICCXdgGate(label=None, ctrl_state=3)"
@@ -145,10 +145,10 @@ def test_custom_resolver() -> None:
     gates = [
         qiskit_superstaq.AceCR("+-"),
         qiskit_superstaq.ZZSwapGate(1.23),
-        qiskit_superstaq.ICCXGate(),
-        qiskit_superstaq.ICCXGate(ctrl_state="00"),
-        qiskit_superstaq.ICCXGate(ctrl_state="01"),
-        qiskit_superstaq.ICCXGate(ctrl_state="10"),
+        qiskit_superstaq.AQTiCCXGate(),
+        qiskit_superstaq.AQTiCCXGate(ctrl_state="00"),
+        qiskit_superstaq.AQTiCCXGate(ctrl_state="01"),
+        qiskit_superstaq.AQTiCCXGate(ctrl_state="10"),
         qiskit_superstaq.ParallelGates(
             qiskit.circuit.library.RXGate(4.56),
             qiskit.circuit.library.CXGate(),
