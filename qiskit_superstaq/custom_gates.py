@@ -185,7 +185,7 @@ class ParallelGates(qiskit.circuit.Gate):
 
 class ICCXGate(qiskit.circuit.ControlledGate):
     def __init__(
-        self, label: Optional[np.ndarray] = None, ctrl_state: Optional[Union[str, int]] = None
+        self, label: Optional[str] = None, ctrl_state: Optional[Union[str, int]] = None
     ) -> None:
         super().__init__(
             "iccx",
@@ -286,7 +286,7 @@ def custom_resolver(gate: qiskit.circuit.Gate) -> Optional[qiskit.circuit.Gate]:
     if gate.name == "iccx":
         return ICCXGate(label=gate.label)
     if gate.name == "iccx_o0":
-        return ICCXGate(label=gate.label, ctrl_state="00")
+        return IICCXGate(label=gate.label)
     if gate.name == "iccx_o1":
         return ICCXGate(label=gate.label, ctrl_state="01")
     if gate.name == "iccx_o2":
