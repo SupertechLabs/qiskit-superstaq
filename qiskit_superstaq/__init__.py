@@ -8,8 +8,6 @@ from .custom_gates import (
     AceCR,
     AQTiCCXGate,
     AQTiToffoliGate,
-    ICCXdgGate,
-    ICCXGate,
     ITOFFOLIGate,
     ParallelGates,
     ZZSwapGate,
