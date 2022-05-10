@@ -108,11 +108,12 @@ jobs:
         run: |
           check/pytest
               
-  pytest:
+  pytest-win:
     name: Pytest Windows
     env:
       PRIVATE_REPOS_KEY: ${{ secrets.PRIVATE_REPOS_KEY }}
     runs-on: windows-latest
+    steps:
       - uses: actions/checkout@v2
       - name: Set up Python 3.8
         uses: actions/setup-python@v2
@@ -123,7 +124,7 @@ jobs:
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           if [ -f dev-requirements.txt ]; then pip install -r dev-requirements.txt; fi
-      - name: Pytest check
+      - name: Pytest-win check
         run: |
           check/pytest
 
