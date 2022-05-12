@@ -127,6 +127,7 @@ jobs:
       - name: Pytest-win check
         run: |
           check/pytest
+        shell: bash
 
   pytest-mac:
     name: Pytest macOS
