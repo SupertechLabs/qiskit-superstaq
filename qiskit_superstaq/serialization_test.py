@@ -43,6 +43,7 @@ def test_circuit_serialization() -> None:
     circuit_1 = qiskit.QuantumCircuit(4)
     circuit_1.append(qiskit_superstaq.AceCR("+-"), [0, 1])
     circuit_1.append(qiskit_superstaq.AceCR("-+"), [1, 2])
+    circuit_1.append(qiskit_superstaq.AceCR("+-", 1.23), [0, 1])
     circuit_1.append(qiskit_superstaq.ZZSwapGate(0.75), [2, 0])
     circuit_1.append(qiskit_superstaq.AQTiCCXGate(), [0, 1, 2])
 
