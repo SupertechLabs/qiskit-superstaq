@@ -119,8 +119,6 @@ def test_parallel_gates() -> None:
         qiskit.circuit.library.ZGate(),
     )
     assert gate.component_gates == gate2.component_gates
-    print(gate.definition)
-    print(gate2.definition)
     assert gate == gate2
 
     with pytest.raises(ValueError, match="Component gates must be"):
