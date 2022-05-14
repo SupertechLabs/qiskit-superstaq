@@ -106,6 +106,23 @@ def test_parallel_gates() -> None:
         all_qargs.update(qargs)
     assert len(all_qargs) == gate.num_qubits
 
+    gate = qiskit_superstaq.ParallelGates(
+        qiskit.circuit.library.XGate(),
+        qiskit_superstaq.ParallelGates(
+            qiskit.circuit.library.YGate(),
+            qiskit.circuit.library.ZGate(),
+        ),
+    )
+    gate2 = qiskit_superstaq.ParallelGates(
+        qiskit.circuit.library.XGate(),
+        qiskit.circuit.library.YGate(),
+        qiskit.circuit.library.ZGate(),
+    )
+    assert gate.component_gates == gate2.component_gates
+    print(gate.definition)
+    print(gate2.definition)
+    assert gate == gate2
+
     with pytest.raises(ValueError, match="Component gates must be"):
         _ = qiskit_superstaq.ParallelGates(qiskit.circuit.Measure())
 
@@ -114,8 +131,8 @@ def test_aqticcx() -> None:
     gate = qiskit_superstaq.AQTiCCXGate()
     _check_gate_definition(gate)
 
-    assert repr(gate) == "qiskit_superstaq.ICCXGate(label=None, ctrl_state=0)"
-    assert str(gate) == "ICCXGate(label=None, ctrl_state=0)"
+    assert repr(gate) == "qiskit_superstaq.iCCXGate(label=None, ctrl_state=0)"
+    assert str(gate) == "iCCXGate(label=None, ctrl_state=0)"
 
     qc = qiskit.QuantumCircuit(3)
 
@@ -138,32 +155,46 @@ def test_aqticcx() -> None:
 
 
 def test_iccxdg() -> None:
-    gate = qiskit_superstaq.custom_gates.ICCXdgGate()
+    gate = qiskit_superstaq.custom_gates.iCCXdgGate()
     _check_gate_definition(gate)
-    assert repr(gate) == "qiskit_superstaq.ICCXdgGate(label=None, ctrl_state=3)"
-    assert str(gate) == "ICCXdgGate(label=None, ctrl_state=3)"
+    assert repr(gate) == "qiskit_superstaq.iCCXdgGate(label=None, ctrl_state=3)"
+    assert str(gate) == "iCCXdgGate(label=None, ctrl_state=3)"
 
 
 def test_custom_resolver() -> None:
-    gates = [
+    custom_gates = [
         qiskit_superstaq.AceCR("+-"),
         qiskit_superstaq.ZZSwapGate(1.23),
         qiskit_superstaq.AQTiCCXGate(),
-        qiskit_superstaq.custom_gates.ICCXGate(),
-        qiskit_superstaq.custom_gates.ICCXGate(ctrl_state="01"),
-        qiskit_superstaq.custom_gates.ICCXGate(ctrl_state="10"),
-        qiskit_superstaq.ParallelGates(
-            qiskit.circuit.library.RXGate(4.56),
-            qiskit.circuit.library.CXGate(),
-            qiskit.circuit.library.XGate(),
-            qiskit_superstaq.AceCR("-+"),
-        ),
+        qiskit_superstaq.custom_gates.iCCXGate(),
+        qiskit_superstaq.custom_gates.iCCXGate(ctrl_state="01"),
+        qiskit_superstaq.custom_gates.iCCXGate(ctrl_state="10"),
     ]
 
-    for gate in gates:
-        resolved_gate = qiskit_superstaq.custom_gates.custom_resolver(gate)
-        assert resolved_gate is not gate
-        assert resolved_gate == gate
+    generic_gates = [
+        qiskit.circuit.Gate(gate.name, gate.num_qubits, gate.params) for gate in custom_gates
+    ]
 
-    assert qiskit_superstaq.custom_gates.custom_resolver(qiskit.circuit.library.CXGate()) is None
-    assert qiskit_superstaq.custom_gates.custom_resolver(qiskit.circuit.library.RXGate(2)) is None
+    for custom_gate, generic_gate in zip(custom_gates, generic_gates):
+        resolved_gate = qiskit_superstaq.custom_gates.custom_resolver(generic_gate)
+        assert resolved_gate == custom_gate
+        assert qiskit_superstaq.custom_gates.custom_resolver(custom_gate) is custom_gate
+
+    parallel_gates = qiskit_superstaq.ParallelGates(
+        qiskit.circuit.library.RXGate(4.56), qiskit.circuit.library.CXGate(), *custom_gates
+    )
+    parallel_generic_gates = qiskit_superstaq.ParallelGates(
+        qiskit.circuit.library.RXGate(4.56), qiskit.circuit.library.CXGate(), *generic_gates
+    )
+    generic_parallel_gates = parallel_generic_gates.definition.to_gate()
+    generic_parallel_gates.name = parallel_gates.name
+
+    assert qiskit_superstaq.custom_gates.custom_resolver(parallel_generic_gates) == parallel_gates
+    assert qiskit_superstaq.custom_gates.custom_resolver(generic_parallel_gates) == parallel_gates
+
+    for gate in (
+        qiskit.circuit.library.CXGate(),
+        qiskit.circuit.library.RXGate(1.23),
+        qiskit.circuit.Gate("unknown", 1, []),
+    ):
+        assert qiskit_superstaq.custom_gates.custom_resolver(gate) is gate
