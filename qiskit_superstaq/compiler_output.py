@@ -4,7 +4,7 @@ from typing import Any, List, Optional, Union
 import applications_superstaq
 import qiskit
 
-import qiskit_superstaq
+import qiskit_superstaq as qss
 
 try:
     import qtrl.sequencer
@@ -105,7 +105,7 @@ def read_json_aqt(json_dict: dict, circuits_is_list: bool) -> CompilerOutput:
         pulse_lists_str = json_dict["pulse_lists_jp"]
         pulse_lists = applications_superstaq.converters.deserialize(pulse_lists_str)
 
-    compiled_circuits = qiskit_superstaq.serialization.deserialize_circuits(
+    compiled_circuits = qss.serialization.deserialize_circuits(
         json_dict["qiskit_circuits"]
     )
     if circuits_is_list:
@@ -126,7 +126,7 @@ def read_json_qscout(json_dict: dict, circuits_is_list: bool) -> CompilerOutput:
         a CompilerOutput object with the compiled circuit(s) and a list of
         jaqal programs in a string representation.
     """
-    compiled_circuits = qiskit_superstaq.serialization.deserialize_circuits(
+    compiled_circuits = qss.serialization.deserialize_circuits(
         json_dict["qiskit_circuits"]
     )
     if circuits_is_list:
@@ -149,7 +149,7 @@ def read_json_only_circuits(json_dict: dict, circuits_is_list: bool) -> Compiler
     Returns:
         a CompilerOutput object with the compiled circuit(s)
     """
-    compiled_circuits = qiskit_superstaq.serialization.deserialize_circuits(
+    compiled_circuits = qss.serialization.deserialize_circuits(
         json_dict["qiskit_circuits"]
     )
     if circuits_is_list:

@@ -7,8 +7,8 @@ import applications_superstaq
 import pytest
 import qiskit
 
-import qiskit_superstaq
-from qiskit_superstaq import compiler_output
+import qiskit_superstaq as qss
+from qss import compiler_output
 
 
 def test_compiler_output_repr() -> None:
@@ -36,7 +36,7 @@ def test_read_json() -> None:
     pulse_lists_str = applications_superstaq.converters.serialize([[[]]])
 
     json_dict = {
-        "qiskit_circuits": qiskit_superstaq.serialization.serialize_circuits(circuit),
+        "qiskit_circuits": qss.serialization.serialize_circuits(circuit),
         "state_jp": state_str,
         "pulse_lists_jp": pulse_lists_str,
     }
@@ -51,7 +51,7 @@ def test_read_json() -> None:
 
     pulse_lists_str = applications_superstaq.converters.serialize([[[]], [[]]])
     json_dict = {
-        "qiskit_circuits": qiskit_superstaq.serialization.serialize_circuits([circuit, circuit]),
+        "qiskit_circuits": qss.serialization.serialize_circuits([circuit, circuit]),
         "state_jp": state_str,
         "pulse_lists_jp": pulse_lists_str,
     }
@@ -59,13 +59,13 @@ def test_read_json() -> None:
     assert out.circuits == [circuit, circuit]
     assert not hasattr(out, "circuit")
 
-    json_dict = {"qiskit_circuits": qiskit_superstaq.serialization.serialize_circuits(circuit)}
+    json_dict = {"qiskit_circuits": qss.serialization.serialize_circuits(circuit)}
 
     out = compiler_output.read_json_only_circuits(json_dict, circuits_is_list=False)
     assert out.circuit == circuit
 
     json_dict = {
-        "qiskit_circuits": qiskit_superstaq.serialization.serialize_circuits([circuit, circuit])
+        "qiskit_circuits": qss.serialization.serialize_circuits([circuit, circuit])
     }
     out = compiler_output.read_json_only_circuits(json_dict, circuits_is_list=True)
     assert out.circuits == [circuit, circuit]
@@ -81,7 +81,7 @@ def test_read_json_with_qtrl() -> None:  # pragma: no cover, b/c test requires q
     state_str = applications_superstaq.converters.serialize(seq.__getstate__())
     pulse_lists_str = applications_superstaq.converters.serialize([[[]]])
     json_dict = {
-        "qiskit_circuits": qiskit_superstaq.serialization.serialize_circuits(circuit),
+        "qiskit_circuits": qss.serialization.serialize_circuits(circuit),
         "state_jp": state_str,
         "pulse_lists_jp": pulse_lists_str,
     }
@@ -100,7 +100,7 @@ def test_read_json_with_qtrl() -> None:  # pragma: no cover, b/c test requires q
 
     pulse_lists_str = applications_superstaq.converters.serialize([[[]], [[]]])
     json_dict = {
-        "qiskit_circuits": qiskit_superstaq.serialization.serialize_circuits([circuit, circuit]),
+        "qiskit_circuits": qss.serialization.serialize_circuits([circuit, circuit]),
         "state_jp": state_str,
         "pulse_lists_jp": pulse_lists_str,
     }
@@ -127,7 +127,7 @@ def test_read_json_with_qscout() -> None:
     )
 
     json_dict = {
-        "qiskit_circuits": qiskit_superstaq.serialization.serialize_circuits(circuit),
+        "qiskit_circuits": qss.serialization.serialize_circuits(circuit),
         "jaqal_programs": [jaqal_program],
     }
 
@@ -136,7 +136,7 @@ def test_read_json_with_qscout() -> None:
     assert out.jaqal_program == jaqal_program
 
     json_dict = {
-        "qiskit_circuits": qiskit_superstaq.serialization.serialize_circuits([circuit, circuit]),
+        "qiskit_circuits": qss.serialization.serialize_circuits([circuit, circuit]),
         "jaqal_programs": [jaqal_program, jaqal_program],
     }
     out = compiler_output.read_json_qscout(json_dict, circuits_is_list=True)
