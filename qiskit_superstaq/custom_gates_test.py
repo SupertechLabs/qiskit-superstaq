@@ -25,28 +25,25 @@ def _check_gate_definition(gate: qiskit.circuit.Gate) -> None:
 def test_acecr() -> None:
     gate = qss.AceCR("+-")
     _check_gate_definition(gate)
-    assert repr(gate) == "qiskit_superstaq.AceCR('+-')"
+    assert repr(gate) == "qss.AceCR('+-')"
     assert str(gate) == "AceCR+-"
     assert gate.qasm() == "acecr_pm"
 
     gate = qss.AceCR("-+", label="label")
     _check_gate_definition(gate)
-    assert repr(gate) == "qiskit_superstaq.AceCR('-+', label='label')"
+    assert repr(gate) == "qss.AceCR('-+', label='label')"
     assert str(gate) == "AceCR-+"
     assert gate.qasm() == "acecr_mp"
 
     gate = qss.AceCR("-+", sandwich_rx_rads=np.pi / 2)
     _check_gate_definition(gate)
-    assert repr(gate) == "qiskit_superstaq.AceCR('-+', sandwich_rx_rads=1.5707963267948966)"
+    assert repr(gate) == "qss.AceCR('-+', sandwich_rx_rads=1.5707963267948966)"
     assert str(gate) == "AceCR-+|RXGate(pi/2)|"
     assert gate.qasm() == "acecr_mp_rx(pi/2)"
 
     gate = qss.AceCR("-+", sandwich_rx_rads=np.pi / 2, label="label")
     _check_gate_definition(gate)
-    assert (
-        repr(gate)
-        == "qiskit_superstaq.AceCR('-+', sandwich_rx_rads=1.5707963267948966, label='label')"
-    )
+    assert repr(gate) == "qss.AceCR('-+', sandwich_rx_rads=1.5707963267948966, label='label')"
     assert str(gate) == "AceCR-+|RXGate(pi/2)|"
     assert gate.qasm() == "acecr_mp_rx(pi/2)"
 
@@ -57,11 +54,11 @@ def test_acecr() -> None:
 def test_zz_swap() -> None:
     gate = qss.ZZSwapGate(1.23)
     _check_gate_definition(gate)
-    assert repr(gate) == "qiskit_superstaq.ZZSwapGate(1.23)"
+    assert repr(gate) == "qss.ZZSwapGate(1.23)"
     assert str(gate) == "ZZSwapGate(1.23)"
 
     gate = qss.ZZSwapGate(4.56, label="label")
-    assert repr(gate) == "qiskit_superstaq.ZZSwapGate(4.56, label='label')"
+    assert repr(gate) == "qss.ZZSwapGate(4.56, label='label')"
     assert str(gate) == "ZZSwapGate(4.56)"
 
 
@@ -114,7 +111,7 @@ def test_aqticcx() -> None:
     gate = qss.AQTiCCXGate()
     _check_gate_definition(gate)
 
-    assert repr(gate) == "qiskit_superstaq.ICCXGate(label=None, ctrl_state=0)"
+    assert repr(gate) == "qss.ICCXGate(label=None, ctrl_state=0)"
     assert str(gate) == "ICCXGate(label=None, ctrl_state=0)"
 
     qc = qiskit.QuantumCircuit(3)
@@ -140,7 +137,7 @@ def test_aqticcx() -> None:
 def test_iccxdg() -> None:
     gate = qss.custom_gates.ICCXdgGate()
     _check_gate_definition(gate)
-    assert repr(gate) == "qiskit_superstaq.ICCXdgGate(label=None, ctrl_state=3)"
+    assert repr(gate) == "qss.ICCXdgGate(label=None, ctrl_state=3)"
     assert str(gate) == "ICCXdgGate(label=None, ctrl_state=3)"
 
 
