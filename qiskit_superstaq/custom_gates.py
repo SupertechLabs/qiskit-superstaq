@@ -219,7 +219,7 @@ class iXGate(qiskit.circuit.Gate):
         return super().control(num_ctrl_qubits, label, ctrl_state)
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__module__}.{str(self)}"
+        return f"qss.custom_gates.{str(self)}"
 
     def __str__(self) -> str:
         return f"iXGate(label={self.label})"
@@ -253,7 +253,7 @@ class iXdgGate(qiskit.circuit.Gate):
         return super().control(num_ctrl_qubits, label, ctrl_state)
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__module__}.{str(self)}"
+        return f"qss.custom_gates.{str(self)}"
 
     def __str__(self) -> str:
         return f"iXdgGate(label={self.label})"
@@ -280,7 +280,7 @@ class iCCXGate(qiskit.circuit.ControlledGate):
         return np.asarray(mat, dtype=dtype)
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__module__}.{str(self)}"
+        return f"qss.custom_gates.{str(self)}"
 
     def __str__(self) -> str:
         return f"iCCXGate(label={self.label}, ctrl_state={self.ctrl_state})"
@@ -305,7 +305,7 @@ class iCCXdgGate(qiskit.circuit.ControlledGate):
         return np.asarray(mat, dtype=dtype)
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__module__}.{str(self)}"
+        return f"qss.custom_gates.{str(self)}"
 
     def __str__(self) -> str:
         return f"iCCXdgGate(label={self.label}, ctrl_state={self.ctrl_state})"

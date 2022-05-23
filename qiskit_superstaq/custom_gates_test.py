@@ -43,10 +43,7 @@ def test_acecr() -> None:
 
     gate = qss.AceCR("-+", sandwich_rx_rads=np.pi / 2, label="label")
     _check_gate_definition(gate)
-    assert (
-        repr(gate)
-        == "qss.AceCR('-+', sandwich_rx_rads=1.5707963267948966, label='label')"
-    )
+    assert repr(gate) == "qss.AceCR('-+', sandwich_rx_rads=1.5707963267948966, label='label')"
     assert str(gate) == "AceCR-+|RXGate(pi/2)|"
     assert gate.qasm() == "acecr_mp_rx(pi/2)"
 
