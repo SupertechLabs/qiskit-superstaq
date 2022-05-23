@@ -1,5 +1,5 @@
 import functools
-from typing import Callable, Dict, List, Optional, Union
+from typing import Callable, Dict, Optional, Tuple, Union
 
 import numpy as np
 import qiskit
@@ -154,7 +154,7 @@ class ParallelGates(qiskit.circuit.Gate):
             component_gates: Gate(s) to be collected into single gate
             label: an optional label for the constructed Gate
         """
-        self.component_gates: List[qiskit.circuit.Gate] = []
+        self.component_gates: Tuple[qiskit.circuit.Gate, ...] = ()
         num_qubits = 0
 
         for gate in component_gates:
@@ -165,7 +165,7 @@ class ParallelGates(qiskit.circuit.Gate):
             elif isinstance(gate, ParallelGates):
                 self.component_gates += gate.component_gates
             else:
-                self.component_gates.append(gate)
+                self.component_gates += (gate,)
 
         name = "parallel_" + "_".join(gate.name for gate in self.component_gates)
         super().__init__(name, num_qubits, [], label=label)
