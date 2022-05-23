@@ -73,7 +73,7 @@ class AceCR(qiskit.circuit.Gate):
             args += f", sandwich_rx_rads={self.sandwich_rx_rads}"
         if self.label:
             args += f", label='{self.label}'"
-        return f"qiskit_superstaq.AceCR({args})"
+        return f"qss.AceCR({args})"
 
     def __str__(self) -> str:
         if not self.sandwich_rx_rads:
@@ -138,7 +138,7 @@ class ZZSwapGate(qiskit.circuit.Gate):
         args = f"{self.params[0]}"
         if self.label:
             args += f", label='{self.label}'"
-        return f"qiskit_superstaq.ZZSwapGate({args})"
+        return f"qss.ZZSwapGate({args})"
 
     def __str__(self) -> str:
         args = qiskit.circuit.tools.pi_check(self.params[0], ndigits=8, output="qasm")
@@ -340,7 +340,7 @@ _custom_gate_resolvers: Dict[str, Callable[..., qiskit.circuit.Gate]] = {
 
 def custom_resolver(gate: qiskit.circuit.Instruction) -> Optional[qiskit.circuit.Gate]:
     """Recover a custom gate type from a generic qiskit.circuit.Gate. Resolution is done using
-    gate.definition.name rather than gate.name, as the former is set by all qiskit_superstaq
+    gate.definition.name rather than gate.name, as the former is set by all qiskit-superstaq
     custom gates and the latter may be modified by calls such as QuantumCircuit.qasm()
     """
 
