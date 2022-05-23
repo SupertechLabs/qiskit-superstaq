@@ -209,7 +209,10 @@ def test_custom_resolver() -> None:
 
     for custom_gate in custom_gates:
         generic_gate = qiskit.circuit.Gate(
-            custom_gate.name, custom_gate.num_qubits, custom_gate.params
+            custom_gate.name,
+            custom_gate.num_qubits,
+            custom_gate.params,
+            label=str(id(custom_gate)),
         )
         generic_gate.definition = custom_gate.definition
         generic_gates.append(generic_gate)
@@ -217,20 +220,30 @@ def test_custom_resolver() -> None:
 
         resolved_gate = qss.custom_gates.custom_resolver(generic_gate)
         assert resolved_gate == custom_gate
+        assert resolved_gate.label == str(id(custom_gate))  # (labels aren't included in __eq__)
 
     parallel_gates = qss.ParallelGates(
         qiskit.circuit.library.RXGate(4.56), qiskit.circuit.library.CXGate(), *custom_gates
     )
     parallel_generic_gates = qss.ParallelGates(
-        qiskit.circuit.library.RXGate(4.56), qiskit.circuit.library.CXGate(), *generic_gates
+        qiskit.circuit.library.RXGate(4.56),
+        qiskit.circuit.library.CXGate(),
+        *generic_gates,
+        label="label-1"
     )
-    generic_parallel_gates = qiskit.circuit.Gate(parallel_gates.name, parallel_gates.num_qubits, [])
-    generic_parallel_gates.definition = parallel_generic_gates.definition
-
+    resolved_gate = qss.custom_gates.custom_resolver(parallel_generic_gates)
     assert parallel_generic_gates != parallel_gates
+    assert resolved_gate == parallel_gates
+    assert resolved_gate.label == "label-1"
+
+    generic_parallel_gates = qiskit.circuit.Gate(
+        parallel_gates.name, parallel_gates.num_qubits, [], label="label-2"
+    )
+    generic_parallel_gates.definition = parallel_generic_gates.definition
+    resolved_gate = qss.custom_gates.custom_resolver(generic_parallel_gates)
     assert generic_parallel_gates != parallel_gates
-    assert qss.custom_gates.custom_resolver(parallel_generic_gates) == parallel_gates
-    assert qss.custom_gates.custom_resolver(generic_parallel_gates) == parallel_gates
+    assert resolved_gate == parallel_gates
+    assert resolved_gate.label == "label-2"
 
     assert qss.custom_gates.custom_resolver(qiskit.circuit.library.CXGate()) is None
     assert qss.custom_gates.custom_resolver(qiskit.circuit.library.RXGate(2)) is None
