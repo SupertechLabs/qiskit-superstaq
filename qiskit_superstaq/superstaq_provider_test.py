@@ -25,9 +25,9 @@ def test_provider() -> None:
         )
     )
 
-    assert str(ss_provider) == "<SuperstaQProvider(name=superstaq_provider)>"
+    assert str(ss_provider) == "<SuperstaQProvider superstaq_provider>"
 
-    assert repr(ss_provider) == "<SuperstaQProvider(name=superstaq_provider, api_key=MY_TOKEN)>"
+    assert repr(ss_provider) == "<SuperstaQProvider(api_key=MY_TOKEN, name=superstaq_provider)>"
 
     backends = {
         "superstaq_backends": {
