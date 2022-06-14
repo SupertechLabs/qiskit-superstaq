@@ -272,3 +272,14 @@ class SuperstaQProvider(
         if isinstance(circuits, qiskit.QuantumCircuit):
             return pulses[0]
         return pulses
+
+    def qiskit_to_cirq(
+        self,
+        qiskit_circuits: Union[qiskit.QuantumCircuit, List[qiskit.QuantumCircuit]],
+    ) -> str:
+        """Converts the given `qiskit.QuantumCircuit`s to (serialized) `cirq.Circuit`s."""
+        serialized_circuits = qss.serialization.serialize_circuits(qiskit_circuits)
+
+        json_dict = self._client.qiskit_to_cirq({"qiskit_circuits": serialized_circuits})
+
+        return json_dict["cirq_circuits"]

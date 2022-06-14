@@ -81,6 +81,19 @@ def test_get_balance() -> None:
     assert ss_provider.get_balance(pretty_output=False) == 12345.6789
 
 
+@patch(
+    "applications_superstaq.superstaq_client._SuperstaQClient.qiskit_to_cirq",
+)
+def test_service_qiskit_to_cirq(mock_qiskit_to_cirq: MagicMock) -> None:
+    provider = qss.SuperstaQProvider(api_key="MY_TOKEN")
+    qc = qiskit.QuantumCircuit(8)
+    qc.cz(4, 5)
+    mock_qiskit_to_cirq.return_value = {
+        "cirq_circuits": "SerializedQuantumCircuit",
+    }
+    assert isinstance(provider.qiskit_to_cirq(qc), str)
+
+
 @patch("requests.post")
 def test_aqt_compile(mock_post: MagicMock) -> None:
     provider = qss.SuperstaQProvider(api_key="MY_TOKEN")
