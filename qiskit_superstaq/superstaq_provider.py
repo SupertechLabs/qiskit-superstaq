@@ -123,6 +123,25 @@ class SuperstaQProvider(
             "X-Client-Version": qss.API_VERSION,
         }
 
+    def resource_estimate(self, circuits: Union[qiskit.QuantumCircuit, List[qiskit.QuantumCircuit]], target: str) -> dict:
+        """Generates resource estimates for circuit(s).
+        
+        Args:
+            circuits: qiskit QuantumCircuit(s).
+            target: string of target representing backend device
+        Returns:
+            ResourceEstimate object containing gate count, critical path length, and error estimate.
+        """
+        serialized_circuits = qss.serialization.serialize_circuits(circuits)
+
+        request_json = {
+            "qiskit_circuits": serialized_circuits,
+            "backend": target,
+        }
+
+        json_dict = self._client.resource_estimate(request_json)
+        return json_dict["resource_estimates"]
+
     def aqt_compile(
         self,
         circuits: Union[qiskit.QuantumCircuit, List[qiskit.QuantumCircuit]],

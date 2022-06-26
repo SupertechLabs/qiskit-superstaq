@@ -149,6 +149,24 @@ def test_service_ibmq_compile(mock_ibmq_compile: MagicMock) -> None:
     )
 
 
+@patch(
+    "applications_superstaq.superstaq_client._SuperstaQClient.resource_estimate",
+)
+def test_service_resource_estimate(mock_resource_estimate: MagicMock) -> None:
+    provider = qss.SuperstaQProvider(api_key="MY_TOKEN")
+
+    resource_estimate = 0.50
+
+    mock_resource_estimate.return_value = {
+        "resource_estimates": resource_estimate,
+    }
+
+    assert (
+        provider.resource_estimate([qiskit.QuantumCircuit()], "qasm_simulator")["resource_estimates"]
+        == resource_estimate
+    )
+
+
 @patch("requests.post")
 def test_qscout_compile(mock_post: MagicMock) -> None:
     provider = qss.SuperstaQProvider(api_key="MY_TOKEN")
