@@ -123,9 +123,11 @@ class SuperstaQProvider(
             "X-Client-Version": qss.API_VERSION,
         }
 
-    def resource_estimate(self, circuits: Union[qiskit.QuantumCircuit, List[qiskit.QuantumCircuit]], target: str) -> dict:
+    def resource_estimate(
+        self, circuits: Union[qiskit.QuantumCircuit, List[qiskit.QuantumCircuit]], target: str
+    ) -> dict:
         """Generates resource estimates for circuit(s).
-        
+
         Args:
             circuits: qiskit QuantumCircuit(s).
             target: string of target representing backend device
