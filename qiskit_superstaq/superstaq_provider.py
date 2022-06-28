@@ -19,6 +19,7 @@ import applications_superstaq
 import qiskit
 from applications_superstaq import finance
 from applications_superstaq import logistics
+from applications_superstaq import ResourceEstimate
 from applications_superstaq import superstaq_client
 from applications_superstaq import user_config
 
@@ -125,16 +126,18 @@ class SuperstaQProvider(
 
     def resource_estimate(
         self, circuits: Union[qiskit.QuantumCircuit, List[qiskit.QuantumCircuit]], target: str
-    ) -> dict:
+    ) -> Union[ResourceEstimate, List[ResourceEstimate]]:
         """Generates resource estimates for circuit(s).
 
         Args:
             circuits: qiskit QuantumCircuit(s).
             target: string of target representing backend device
         Returns:
-            ResourceEstimate object containing gate count, critical path length, and error estimate.
+            ResourceEstimate object containing resource costs (after compilation)
+            for running circuit(s) on target.
         """
         serialized_circuits = qss.serialization.serialize_circuits(circuits)
+        circuit_is_list = not isinstance(circuits, qiskit.QuantumCircuit)
 
         request_json = {
             "qiskit_circuits": serialized_circuits,
@@ -142,7 +145,14 @@ class SuperstaQProvider(
         }
 
         json_dict = self._client.resource_estimate(request_json)
-        return json_dict["resource_estimates"]
+
+        # Type must be specified due to mypy issue: https://github.com/python/mypy/issues/6898
+        resource_estimates: Union[ResourceEstimate, List[ResourceEstimate]] = (
+            [ResourceEstimate(json_data=resource) for resource in json_dict["resource_estimates"]]
+            if circuit_is_list
+            else ResourceEstimate(json_data=json_dict["resource_estimates"])
+        )
+        return resource_estimates
 
     def aqt_compile(
         self,
