@@ -56,7 +56,7 @@ def test_acer_non_neighbor_qubits_compile(provider: qss.SuperstaQProvider) -> No
     assert isinstance(out.circuit, qiskit.QuantumCircuit)
     assert isinstance(out.pulse_sequence, qiskit.pulse.Schedule)
     print(out.pulse_sequence.duration)
-    assert 3600 <= out.pulse_sequence.duration <= 7500  # 3616 as of 6/30/2022
+    assert 3000 <= out.pulse_sequence.duration <= 4000  # 3616 as of 6/30/2022
     assert out.pulse_sequence.start_time == 0
     assert len(out.pulse_sequence) == 15
 
