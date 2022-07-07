@@ -159,11 +159,32 @@ def test_service_resource_estimate(mock_resource_estimate: MagicMock) -> None:
     resource_estimate = ResourceEstimate(0, 1, 2)
 
     mock_resource_estimate.return_value = {
-        "resource_estimates": {"num_single_qubit_gates": 0, "num_two_qubit_gates": 1, "depth": 2}
+        "resource_estimates": [{"num_single_qubit_gates": 0, "num_two_qubit_gates": 1, "depth": 2}]
     }
 
     assert (
         provider.resource_estimate(qiskit.QuantumCircuit(), "qasm_simulator") == resource_estimate
+    )
+
+
+@patch(
+    "applications_superstaq.superstaq_client._SuperstaQClient.resource_estimate",
+)
+def test_service_resource_estimate_list(mock_resource_estimate: MagicMock) -> None:
+    provider = qss.SuperstaQProvider(api_key="MY_TOKEN")
+
+    resource_estimates = [ResourceEstimate(0, 1, 2), ResourceEstimate(3, 4, 5)]
+
+    mock_resource_estimate.return_value = {
+        "resource_estimates": [
+            {"num_single_qubit_gates": 0, "num_two_qubit_gates": 1, "depth": 2},
+            {"num_single_qubit_gates": 3, "num_two_qubit_gates": 4, "depth": 5},
+        ]
+    }
+
+    assert (
+        provider.resource_estimate([qiskit.QuantumCircuit()], "qasm_simulator")
+        == resource_estimates
     )
 
 
