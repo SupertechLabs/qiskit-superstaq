@@ -4,8 +4,7 @@ import os
 import numpy as np
 import pytest
 import qiskit
-from applications_superstaq import SuperstaQException
-from applications_superstaq import ResourceEstimate
+from applications_superstaq import ResourceEstimate, SuperstaQException
 
 import qiskit_superstaq as qss
 
@@ -96,7 +95,7 @@ def test_get_resource_estimate(provider: qss.SuperstaQProvider) -> None:
     circuit2.cz(1, 0)
     circuit2.measure(1, 1)
 
-    resource_estimates = provider.resource_estimates([circuit1, circuit2], "neutral_atom_qpu")
+    resource_estimates = provider.resource_estimate([circuit1, circuit2], "neutral_atom_qpu")
 
     assert resource_estimates == [resource_estimate, ResourceEstimate(2, 2, 4)]
 
