@@ -116,7 +116,7 @@ def test_cq_compile(provider: qss.SuperstaQProvider) -> None:
 
     circuit = qiskit.QuantumCircuit(1)
     circuit.h(0)
-    expected = qiskit.QuantumCircuit(1)
+    expected = qiskit.QuantumCircuit(6)
     expected.append(GR(1, -0.25 * np.pi, 0.5 * np.pi), [0])
     expected.rz(np.pi, 0)
     expected.append(GR(1, 0.25 * np.pi, 0.5 * np.pi), [0])
