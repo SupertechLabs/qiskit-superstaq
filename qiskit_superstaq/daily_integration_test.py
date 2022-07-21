@@ -63,7 +63,7 @@ def test_acer_non_neighbor_qubits_compile(provider: qss.SuperstaQProvider) -> No
 def test_aqt_compile(provider: qss.SuperstaQProvider) -> None:
     circuit = qiskit.QuantumCircuit(8)
     circuit.h(4)
-    expected = qiskit.QuantumCircuit(5)
+    expected = qiskit.QuantumCircuit(8)
     expected.rz(np.pi / 2, 4)
     expected.rx(np.pi / 2, 4)
     expected.rz(np.pi / 2, 4)
